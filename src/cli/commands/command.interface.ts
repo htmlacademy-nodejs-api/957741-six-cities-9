@@ -1,4 +1,6 @@
+import { CommandName } from '../constants.js';
+
 export interface Command {
-    getName(): string;
+    getName(): CommandName;
     execute(...parameters: string[]): void;
 }
