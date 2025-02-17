@@ -1,5 +1,5 @@
 // Тип пользователя
-enum UserType {
+export enum UserType {
     STANDARD = 'standard',
     PRO = 'pro',
 }
