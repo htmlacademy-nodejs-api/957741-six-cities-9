@@ -6,7 +6,11 @@ export class GenerateCommand implements Command {
     return CommandName.GENERATE;
   }
 
-  public async execute(..._parameters: string[]): Promise<void> {
-    console.info('...Генерация произвольного количества тестовых данных');
+  public execute(...parameters: string[]): void {
+    const [count, filepath, url] = parameters;
+    const offerCount = Number.parseInt(count, 10);
+
+    // Код для получения данных с сервера.
+    // Формирование объявлений.
   }
 }
