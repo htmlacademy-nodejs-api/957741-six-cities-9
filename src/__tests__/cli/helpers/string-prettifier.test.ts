@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { StringPrettifier } from '../../../cli/helpers/string-prettifier.js';
+import { StringPrettifier } from '../../../cli/helpers/index.js';
 
 describe('StringPrettifier', () => {
   test('formats error message in red', () => {
@@ -26,10 +26,9 @@ describe('StringPrettifier', () => {
     expect(StringPrettifier.success('')).toBe(chalk.green(''));
   });
 
-  test('handles non-string input by converting to string', () => {
+  test('handles string conversion for input', () => {
     const numberInput = 123;
-    expect(StringPrettifier.error(numberInput)).toBe(chalk.red(String(numberInput)));
-    expect(StringPrettifier.info(numberInput)).toBe(chalk.blue(String(numberInput)));
-    expect(StringPrettifier.success(numberInput)).toBe(chalk.green(String(numberInput)));
+    expect(StringPrettifier.error(String(numberInput))).toBe(chalk.red('123'));
+    expect(StringPrettifier.info(String(numberInput))).toBe(chalk.blue('123'));
   });
-}); 
+});

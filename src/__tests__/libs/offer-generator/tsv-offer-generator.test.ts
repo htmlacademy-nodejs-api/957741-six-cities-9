@@ -91,4 +91,4 @@ describe('TSVOfferGenerator', () => {
     expect(Number(commentsCount)).toBeGreaterThanOrEqual(0);
     expect(location.split(',').length).toBe(2);
   });
-}); 
+});

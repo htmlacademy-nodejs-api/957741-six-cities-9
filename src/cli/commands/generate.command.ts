@@ -1,13 +1,11 @@
 import got from 'got';
 
 import { getErrorMessage } from '../../shared/helpers/index.js';
-import { TSVOfferGenerator } from '../../shared/libs/offer-generator/index.js';
-import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
-import { StringPrettifier } from '../helpers/string-prettifier.js';
-
+import { TSVOfferGenerator, TSVFileWriter } from '../../shared/libs/index.js';
+import { StringPrettifier } from '../helpers/index.js';
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
-import { MockServerData } from '../../shared/types/mock-server-data.type.js';
+import { MockServerData } from '../../shared/types/index.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
@@ -38,10 +36,10 @@ export class GenerateCommand implements Command {
 
     try {
       await this.load(url);
-    } catch (error: unknown) {
-      console.error('Can\'t generate data');
       await this.write(filepath, offerCount);
       console.info(`File ${filepath} was created!`);
+    } catch (error: unknown) {
+      console.error('Can\'t generate data');
       console.error(StringPrettifier.error(getErrorMessage(error)));
     }
   }

@@ -37,7 +37,7 @@ describe('getRandomItems', () => {
     const result = getRandomItems(items);
 
     expect(Array.isArray(result)).toBe(true);
-    result.forEach(item => {
+    result.forEach((item) => {
       expect(items).toContain(item);
     });
   });
@@ -47,7 +47,7 @@ describe('getRandomItems', () => {
     const result = getRandomItems(items);
 
     let lastIndex = -1;
-    result.forEach(item => {
+    result.forEach((item) => {
       const currentIndex = items.indexOf(item);
       expect(currentIndex).toBeGreaterThan(lastIndex);
       lastIndex = currentIndex;
@@ -68,4 +68,4 @@ describe('getErrorMessage', () => {
     expect(getErrorMessage(null)).toBe('');
     expect(getErrorMessage(undefined)).toBe('');
   });
-}); 
+});

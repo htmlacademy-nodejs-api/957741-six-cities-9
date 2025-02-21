@@ -1,19 +1,14 @@
 import EventEmitter from 'node:events';
-import { FileReader } from './file-reader.interface.js';
 import { createReadStream } from 'node:fs';
-
-import { Offer, HousingType, Amenity, City, Location, CityNames } from '../../types/offer.js';
-import { User, UserType } from '../../types/user.js';
+import { FileReader } from './file-reader.interface.js';
+import { Offer, HousingType, Amenity, City, Location, CityNames, User, UserType } from '../../types/index.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   private CHUNK_SIZE = 16384; // 16KB
 
-  constructor(
-    private readonly filename: string
-  ) {
+  constructor(private readonly filename: string) {
     super();
   }
-
 
   private parseLineToOffer(line: string): Offer {
     const [
@@ -93,7 +88,6 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   private parseUser(userStr: string): User {
-    // Ожидается формат: "name,email,avatar,password,userType"
     const parts = userStr.split(',').map((s) => s.trim());
     if (parts.length < 5) {
       throw new Error(`Некорректные данные пользователя: ${userStr}`);

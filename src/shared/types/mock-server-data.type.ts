@@ -1,5 +1,5 @@
-import { City, HousingType, Amenity, Location } from './offer.js';
-import { UserType } from './user.js';
+import { City, HousingType, Amenity, Location } from './index.js';
+import { UserType } from './index.js';
 
 export type MockServerData = {
   offer: {

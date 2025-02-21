@@ -44,4 +44,4 @@ describe('GenerateCommand', () => {
     await command.execute('10', 'test.tsv', 'http://localhost:3123/api');
     expect(command['write']).toHaveBeenCalledWith('test.tsv', 10);
   });
-}); 
+});

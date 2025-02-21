@@ -35,4 +35,4 @@ describe('TSVFileWriter', () => {
     expect(consoleSpy).toHaveBeenCalledWith('Can\'t write to file: Write error');
     consoleSpy.mockRestore();
   });
-}); 
+});
