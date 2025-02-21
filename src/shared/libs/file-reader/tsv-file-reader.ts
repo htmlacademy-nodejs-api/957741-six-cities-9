@@ -1,11 +1,12 @@
 import EventEmitter from 'node:events';
 import { FileReader } from './file-reader.interface.js';
+import { createReadStream } from 'node:fs';
 
 import { Offer, HousingType, Amenity, City, Location, CityNames } from '../../types/offer.js';
 import { User, UserType } from '../../types/user.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
-  private rawData = '';
+  private CHUNK_SIZE = 16384; // 16KB
 
   constructor(
     private readonly filename: string
@@ -13,12 +14,6 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     super();
   }
 
-
-  private validateRawData(): void {
-    if (!this.rawData) {
-      throw new Error('File was not read');
-    }
-  }
 
   private parseLineToOffer(line: string): Offer {
     const [
@@ -115,19 +110,28 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     };
   }
 
-  private parseRawDataToOffers(): Offer[] {
-    return this.rawData
-      .split('\n')
-      .filter((row) => row.trim().length > 0)
-      .map((line) => this.parseLineToOffer(line));
-  }
+  public async read(): Promise<void> {
+    const readStream = createReadStream(this.filename, {
+      highWaterMark: this.CHUNK_SIZE,
+      encoding: 'utf-8',
+    });
 
-  public read(): void {
-    // Код для работы с потоками
-  }
+    let remainingData = '';
+    let nextLinePosition = -1;
+    let importedRowCount = 0;
 
-  public toArray(): Offer[] {
-    this.validateRawData();
-    return this.parseRawDataToOffers();
+    for await (const chunk of readStream) {
+      remainingData += chunk.toString();
+
+      while ((nextLinePosition = remainingData.indexOf('\n')) >= 0) {
+        const completeRow = remainingData.slice(0, nextLinePosition + 1);
+        remainingData = remainingData.slice(++nextLinePosition);
+        importedRowCount++;
+
+        const parsedOffer = this.parseLineToOffer(completeRow);
+        this.emit('line', parsedOffer);
+      }
+    }
+    this.emit('end', importedRowCount);
   }
 }
