@@ -6,6 +6,7 @@ import { StringPrettifier } from '../helpers/index.js';
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
 import { MockServerData } from '../../shared/types/index.js';
+import { PARSE } from '../../shared/constants/index.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
@@ -32,7 +33,7 @@ export class GenerateCommand implements Command {
 
   public async execute(...parameters: string[]): Promise<void> {
     const [count, filepath, url] = parameters;
-    const offerCount = Number.parseInt(count, 10);
+    const offerCount = Number.parseInt(count, PARSE.RADIX);
 
     try {
       await this.load(url);

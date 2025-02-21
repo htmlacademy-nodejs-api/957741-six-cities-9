@@ -2,10 +2,9 @@ import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 import { FileReader } from './file-reader.interface.js';
 import { Offer, HousingType, Amenity, City, Location, CityNames, User, UserType } from '../../types/index.js';
+import { FILE_SYSTEM, FILE, PARSE, USER, OFFER } from '../../constants/index.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
-  private CHUNK_SIZE = 16384; // 16KB
-
   constructor(private readonly filename: string) {
     super();
   }
@@ -29,7 +28,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       user,
       commentsCount,
       location
-    ] = line.split('\t');
+    ] = line.split(FILE.SEPARATOR.TSV);
 
     return {
       title: title.trim(),
@@ -42,12 +41,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       isFavorite: this.parseBoolean(isFavorite),
       rating: parseFloat(rating),
       type: this.parseHousingType(type),
-      rooms: parseInt(rooms, 10),
-      guests: parseInt(guests, 10),
-      price: parseInt(price, 10),
+      rooms: parseInt(rooms, PARSE.RADIX),
+      guests: parseInt(guests, PARSE.RADIX),
+      price: parseInt(price, PARSE.RADIX),
       amenities: this.parseAmenities(amenities),
       user: this.parseUser(user),
-      commentsCount: parseInt(commentsCount, 10),
+      commentsCount: parseInt(commentsCount, PARSE.RADIX),
       location: this.parseLocation(location)
     };
   }
@@ -57,7 +56,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   private parseCity(cityStr: string): City {
-    const [name, latStr, lngStr] = cityStr.split(',').map((s) => s.trim());
+    const [name, latStr, lngStr] = cityStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
     return {
       name: name as CityNames,
       location: {
@@ -68,15 +67,15 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   private parseImages(imagesStr: string): [string, string, string, string, string, string] {
-    const imgs = imagesStr.split(',').map((url) => url.trim());
-    if (imgs.length !== 6) {
+    const imgs = imagesStr.split(FILE.SEPARATOR.CSV).map((url) => url.trim());
+    if (imgs.length !== OFFER.IMAGES.COUNT) {
       throw new Error(`Некорректное количество изображений: ${imgs.length}`);
     }
     return imgs as [string, string, string, string, string, string];
   }
 
   private parseBoolean(boolStr: string): boolean {
-    return boolStr.trim().toLowerCase() === 'true';
+    return boolStr.trim().toLowerCase() === PARSE.BOOLEAN_TRUE;
   }
 
   private parseHousingType(typeStr: string): HousingType {
@@ -84,12 +83,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   private parseAmenities(amenitiesStr: string): Amenity[] {
-    return amenitiesStr.split(',').map((s) => s.trim().toLowerCase()) as Amenity[];
+    return amenitiesStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim().toLowerCase()) as Amenity[];
   }
 
   private parseUser(userStr: string): User {
-    const parts = userStr.split(',').map((s) => s.trim());
-    if (parts.length < 5) {
+    const parts = userStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
+    if (parts.length < USER.MIN_FIELDS) {
       throw new Error(`Некорректные данные пользователя: ${userStr}`);
     }
     const [name, email, avatar, password, userType] = parts;
@@ -97,7 +96,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   private parseLocation(locationStr: string): Location {
-    const [latStr, lngStr] = locationStr.split(',').map((s) => s.trim());
+    const [latStr, lngStr] = locationStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
     return {
       latitude: Number(latStr),
       longitude: Number(lngStr)
@@ -106,8 +105,8 @@ export class TSVFileReader extends EventEmitter implements FileReader {
 
   public async read(): Promise<void> {
     const readStream = createReadStream(this.filename, {
-      highWaterMark: this.CHUNK_SIZE,
-      encoding: 'utf-8',
+      highWaterMark: FILE_SYSTEM.CHUNK_SIZE,
+      encoding: FILE_SYSTEM.ENCODING,
     });
 
     let remainingData = '';
@@ -117,7 +116,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     for await (const chunk of readStream) {
       remainingData += chunk.toString();
 
-      while ((nextLinePosition = remainingData.indexOf('\n')) >= 0) {
+      while ((nextLinePosition = remainingData.indexOf(FILE.SEPARATOR.NEW_LINE)) >= 0) {
         const completeRow = remainingData.slice(0, nextLinePosition + 1);
         remainingData = remainingData.slice(++nextLinePosition);
         importedRowCount++;
