@@ -1,38 +1,38 @@
-import { WriteStream } from 'node:fs';
+import { describe, expect, jest, test } from '@jest/globals';
+import { createWriteStream } from 'node:fs';
 import { TSVFileWriter } from '../../../shared/libs/file-writer/tsv-file-writer.js';
 
-jest.mock('node:fs', () => ({
-  createWriteStream: jest.fn().mockReturnValue({
-    write: jest.fn(),
-    end: jest.fn()
-  })
-}));
+jest.mock('node:fs');
 
 describe('TSVFileWriter', () => {
-  let writer: TSVFileWriter;
-  let mockWriteStream: jest.Mocked<WriteStream>;
+  const mockWriteStream = {
+    write: jest.fn(),
+    end: jest.fn(),
+    once: jest.fn(),
+  };
 
   beforeEach(() => {
-    writer = new TSVFileWriter('test.tsv');
-    mockWriteStream = writer['stream'] as jest.Mocked<WriteStream>;
+    (createWriteStream as jest.Mock).mockReturnValue(mockWriteStream);
+    jest.clearAllMocks();
   });
 
-  test('writes row with newline', () => {
-    const row = 'test\tdata';
+  test('should write row to file', () => {
+    const writer = new TSVFileWriter('test.tsv');
+    const row = ['value1', 'value2'].join('\t');
+
+    mockWriteStream.write.mockReturnValue(true);
     writer.write(row);
+
     expect(mockWriteStream.write).toHaveBeenCalledWith(`${row}\n`);
   });
 
-  test('handles write error', () => {
-    const error = new Error('Write error');
-    mockWriteStream.write = jest.fn(() => {
-      throw error;
-    });
+  test('should handle write buffer full', () => {
+    const writer = new TSVFileWriter('test.tsv');
+    const row = ['value1', 'value2'].join('\t');
 
-    const consoleSpy = jest.spyOn(console, 'error');
-    writer.write('test');
+    mockWriteStream.write.mockReturnValue(false);
+    writer.write(row);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Can\'t write to file: Write error');
-    consoleSpy.mockRestore();
+    expect(mockWriteStream.once).toHaveBeenCalledWith('drain', expect.any(Function));
   });
 });

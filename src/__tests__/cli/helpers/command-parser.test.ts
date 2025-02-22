@@ -1,47 +1,38 @@
-import { CommandParser } from '../../../cli/helpers/index.js';
+import { CommandParser } from '../../../cli/helpers/command-parser.js';
 
 describe('CommandParser', () => {
-  let parser: CommandParser;
-
-  beforeEach(() => {
-    parser = new CommandParser();
+  it('should parse version command correctly', () => {
+    const { name } = CommandParser.parse(['node', 'script.js', '--version']);
+    expect(name).toBe('--version');
   });
 
-  test('parses command name correctly', () => {
-    parser.parse(['node', 'script.js', '--version']);
-    expect(parser.getName()).toBe('--version');
+  it('should parse generate command with arguments correctly', () => {
+    const { name, args } = CommandParser.parse(['node', 'script.js', '--generate', '5', 'test.tsv', 'http://localhost:3123/api']);
+    expect(name).toBe('--generate');
+    expect(args).toEqual(['5', 'test.tsv', 'http://localhost:3123/api']);
   });
 
-  test('parses command arguments correctly', () => {
-    parser.parse(['node', 'script.js', '--generate', '5', 'test.tsv', 'http://localhost:3123/api']);
-    expect(parser.getName()).toBe('--generate');
-    expect(parser.getArguments()).toEqual(['5', 'test.tsv', 'http://localhost:3123/api']);
+  it('should handle no command', () => {
+    const { name, args } = CommandParser.parse(['node', 'script.js']);
+    expect(name).toBe('');
+    expect(args).toEqual([]);
   });
 
-  test('returns empty string for command name when no command provided', () => {
-    parser.parse(['node', 'script.js']);
-    expect(parser.getName()).toBe('');
+  it('should parse help command with no arguments', () => {
+    const { name, args } = CommandParser.parse(['node', 'script.js', '--help']);
+    expect(name).toBe('--help');
+    expect(args).toEqual([]);
   });
 
-  test('returns empty array for arguments when no arguments provided', () => {
-    parser.parse(['node', 'script.js', '--help']);
-    expect(parser.getArguments()).toEqual([]);
+  it('should handle empty argv', () => {
+    const { name, args } = CommandParser.parse([]);
+    expect(name).toBe('');
+    expect(args).toEqual([]);
   });
 
-  test('handles empty input array', () => {
-    parser.parse([]);
-    expect(parser.getName()).toBe('');
-    expect(parser.getArguments()).toEqual([]);
-  });
-
-  test('ignores extra spaces in arguments', () => {
-    parser.parse(['node', 'script.js', '--import', '  test.tsv  ', '  database  ']);
-    expect(parser.getArguments()).toEqual(['  test.tsv  ', '  database  ']);
-  });
-
-  test('preserves argument order', () => {
-    const args = ['arg1', 'arg2', 'arg3'];
-    parser.parse(['node', 'script.js', '--command', ...args]);
-    expect(parser.getArguments()).toEqual(args);
+  it('should preserve argument whitespace', () => {
+    const { name, args } = CommandParser.parse(['node', 'script.js', '--import', '  test.tsv  ', '  database  ']);
+    expect(name).toBe('--import');
+    expect(args).toEqual(['  test.tsv  ', '  database  ']);
   });
 });

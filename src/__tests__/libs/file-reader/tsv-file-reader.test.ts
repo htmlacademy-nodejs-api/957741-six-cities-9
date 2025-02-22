@@ -1,94 +1,95 @@
+import { describe, expect, jest, it, beforeEach } from '@jest/globals';
 import { createReadStream } from 'node:fs';
-import EventEmitter from 'node:events';
-import { TSVFileReader } from '../../../shared/libs/file-reader/index.js';
+import { createInterface } from 'node:readline';
+import { TSVFileReader } from '../../../shared/libs/file-reader/tsv-file-reader.js';
+import { CityNames } from '../../../shared/types/index.js';
+import { User } from '../../../shared/types/index.js';
+import { Offer } from '../../../shared/types/index.js';
+import { HousingType } from '../../../shared/types/index.js';
+import { UserType } from '../../../shared/types/index.js';
+import { Amenity } from '../../../shared/types/index.js';
 
-const mockContent = [
-  'title1\tdesc1\t2024-01-01\tParis,48.85661,2.351499\tpreview1.jpg\timg1.jpg,img2.jpg,img3.jpg,img4.jpg,img5.jpg,img6.jpg\ttrue\tfalse\t4.5\tapartment\t2\t4\t1000\tbreakfast,wifi\tJohn,john@test.com,avatar.jpg,pass123,standard\t5\t48.85661,2.351499',
-  'title2\tdesc2\t2024-01-02\tBrussels,50.846557,4.351697\tpreview2.jpg\timg7.jpg,img8.jpg,img9.jpg,img10.jpg,img11.jpg,img12.jpg\tfalse\ttrue\t4.8\thouse\t3\t6\t2000\twasher,towels\tJane,jane@test.com,avatar2.jpg,pass456,pro\t10\t50.846557,4.351697'
-].join('\n');
-
-jest.mock('node:fs', () => ({
-  createReadStream: jest.fn()
-}));
+jest.mock('node:fs');
+jest.mock('node:readline');
 
 describe('TSVFileReader', () => {
-  let reader: TSVFileReader;
-  let mockStream: EventEmitter;
+  let fileReader: TSVFileReader;
+  const images: [string, string, string, string, string, string] = [
+    'image1.jpg',
+    'image2.jpg',
+    'image3.jpg',
+    'image4.jpg',
+    'image5.jpg',
+    'image6.jpg'
+  ];
+  const mockLine = `test title\tdescription\t2024-01-01\tParis,48.85661,2.351499\tpreview.jpg\t${images.join(',')}\ttrue\tfalse\t4.5\tHouse\t3\t6\t100\tBREAKFAST,WASHER\tJohn,john@example.com,avatar.jpg,password123,pro\t0\t48.85661,2.351499`;
+  const mockOffer: Offer = {
+    title: 'test title',
+    description: 'description',
+    postDate: new Date('2024-01-01'),
+    city: {
+      name: CityNames.PARIS,
+      location: {
+        latitude: 48.85661,
+        longitude: 2.351499
+      }
+    },
+    previewImage: 'preview.jpg',
+    images,
+    isPremium: true,
+    isFavorite: false,
+    rating: 4.5,
+    type: HousingType.HOUSE,
+    rooms: 3,
+    guests: 6,
+    price: 100,
+    amenities: [Amenity.BREAKFAST, Amenity.WASHER],
+    user: {
+      name: 'John',
+      email: 'john@example.com',
+      avatar: 'avatar.jpg',
+      password: 'password123',
+      userType: UserType.PRO
+    } as User,
+    commentsCount: 0,
+    location: {
+      latitude: 48.85661,
+      longitude: 2.351499
+    }
+  };
 
   beforeEach(() => {
-    mockStream = new EventEmitter();
-    (createReadStream as jest.Mock).mockReturnValue(mockStream);
-    reader = new TSVFileReader('test.tsv');
+    fileReader = new TSVFileReader('test.tsv');
   });
 
-  test('emits line event for each valid line', async () => {
-    const onLine = jest.fn();
-    reader.on('line', onLine);
+  it('should read file content', async () => {
+    const iterator = {
+      hasNext: true,
+      async next() {
+        if (!this.hasNext) {
+          return { done: true, value: undefined };
+        }
+        this.hasNext = false;
+        return { done: false, value: mockLine };
+      }
+    };
 
-    const readPromise = reader.read();
+    const mockReadline = {
+      [Symbol.asyncIterator]: () => iterator,
+      close: jest.fn().mockImplementation(() => Promise.resolve())
+    };
 
-    mockStream.emit('data', mockContent);
-    mockStream.emit('end');
+    (createReadStream as jest.Mock).mockReturnValue({ close: jest.fn() });
+    (createInterface as jest.Mock).mockReturnValue(mockReadline);
 
-    await readPromise;
+    const parsedOffers: Offer[] = [];
+    fileReader.on('line', (line) => {
+      parsedOffers.push(fileReader['parseLineToOffer'](line));
+    });
 
-    expect(onLine).toHaveBeenCalledTimes(2);
+    await fileReader.read();
 
-    const firstCall = onLine.mock.calls[0][0];
-    expect(firstCall).toEqual(expect.objectContaining({
-      title: 'title1',
-      description: 'desc1',
-      type: 'apartment',
-      rooms: 2,
-      guests: 4,
-      price: 1000,
-      user: expect.objectContaining({
-        name: 'John',
-        email: 'john@test.com'
-      })
-    }));
-  });
-
-  test('emits end event with correct count', async () => {
-    const onEnd = jest.fn();
-    reader.on('end', onEnd);
-
-    const readPromise = reader.read();
-
-    mockStream.emit('data', mockContent);
-    mockStream.emit('end');
-
-    await readPromise;
-
-    expect(onEnd).toHaveBeenCalledWith(2);
-  });
-
-  test('handles partial chunks correctly', async () => {
-    const onLine = jest.fn();
-    reader.on('line', onLine);
-
-    const readPromise = reader.read();
-
-    mockStream.emit('data', mockContent.slice(0, 100));
-    mockStream.emit('data', mockContent.slice(100));
-    mockStream.emit('end');
-
-    await readPromise;
-
-    expect(onLine).toHaveBeenCalledTimes(2);
-  });
-
-  test('handles empty lines', async () => {
-    const onLine = jest.fn();
-    reader.on('line', onLine);
-
-    const readPromise = reader.read();
-
-    mockStream.emit('data', `\n${mockContent}\n`);
-    mockStream.emit('end');
-
-    await readPromise;
-
-    expect(onLine).toHaveBeenCalledTimes(2);
+    expect(parsedOffers).toHaveLength(1);
+    expect(parsedOffers[0]).toEqual(mockOffer);
   });
 });

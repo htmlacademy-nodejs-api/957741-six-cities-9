@@ -1,47 +1,55 @@
 import got from 'got';
-
-import { getErrorMessage } from '../../shared/helpers/index.js';
-import { TSVOfferGenerator, TSVFileWriter } from '../../shared/libs/index.js';
-import { StringPrettifier } from '../helpers/index.js';
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
-import { MockServerData } from '../../shared/types/index.js';
-import { PARSE } from '../../shared/constants/index.js';
+import { TSVOfferGenerator } from '../../shared/libs/offer-generator/index.js';
+import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
+import { getErrorMessage } from '../../shared/helpers/index.js';
+import { MockServerData } from '../../shared/types/mock-server-data.type.js';
 
 export class GenerateCommand implements Command {
-  private initialData: MockServerData;
+  private readonly timeout = { request: 10000 };
 
   public getName(): CommandName {
     return CommandName.GENERATE;
   }
 
-  private async load(url: string) {
+  private validateUrl(url: string): void {
     try {
-      this.initialData = await got.get(url).json();
+      new URL(url);
     } catch {
-      throw new Error(`Can't load data from ${url}`);
-    }
-  }
-
-  private async write(filepath: string, offerCount: number) {
-    const tsvOfferGenerator = new TSVOfferGenerator(this.initialData);
-    const tsvFileWriter = new TSVFileWriter(filepath);
-    for (let i = 0; i < offerCount; i++) {
-      await tsvFileWriter.write(tsvOfferGenerator.generate());
+      throw new Error('Invalid URL format');
     }
   }
 
   public async execute(...parameters: string[]): Promise<void> {
     const [count, filepath, url] = parameters;
-    const offerCount = Number.parseInt(count, PARSE.RADIX);
+
+    if (!count || !filepath || !url) {
+      throw new Error('Missing required parameters');
+    }
+
+    const offerCount = Number.parseInt(count, 10);
+    if (Number.isNaN(offerCount)) {
+      throw new Error('Count parameter must be a number');
+    }
+
+    this.validateUrl(url);
 
     try {
-      await this.load(url);
-      await this.write(filepath, offerCount);
+      const { body } = await got.get(url, { timeout: this.timeout });
+      const mockData = JSON.parse(body) as { api: MockServerData };
+
+      const tsvOfferGenerator = new TSVOfferGenerator(mockData.api);
+      const tsvFileWriter = new TSVFileWriter(filepath);
+
+      for (let i = 0; i < offerCount; i++) {
+        const offer = tsvOfferGenerator.generate();
+        tsvFileWriter.write(offer);
+      }
+
       console.info(`File ${filepath} was created!`);
     } catch (error: unknown) {
-      console.error('Can\'t generate data');
-      console.error(StringPrettifier.error(getErrorMessage(error)));
+      throw new Error(`Failed to generate data: ${getErrorMessage(error)}`);
     }
   }
 }

@@ -1,8 +1,9 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
+import { createInterface } from 'node:readline';
 import { FileReader } from './file-reader.interface.js';
 import { Offer, HousingType, Amenity, City, Location, CityNames, User, UserType } from '../../types/index.js';
-import { FILE_SYSTEM, FILE, PARSE, USER, OFFER } from '../../constants/index.js';
+import { FILE, PARSE, USER, OFFER } from '../../constants/index.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   constructor(private readonly filename: string) {
@@ -104,27 +105,27 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   public async read(): Promise<void> {
-    const readStream = createReadStream(this.filename, {
-      highWaterMark: FILE_SYSTEM.CHUNK_SIZE,
-      encoding: FILE_SYSTEM.ENCODING,
+    const stream = createReadStream(this.filename, {
+      encoding: 'utf-8',
     });
 
-    let remainingData = '';
-    let nextLinePosition = -1;
-    let importedRowCount = 0;
+    const rl = createInterface({
+      input: stream,
+      crlfDelay: Infinity
+    });
 
-    for await (const chunk of readStream) {
-      remainingData += chunk.toString();
-
-      while ((nextLinePosition = remainingData.indexOf(FILE.SEPARATOR.NEW_LINE)) >= 0) {
-        const completeRow = remainingData.slice(0, nextLinePosition + 1);
-        remainingData = remainingData.slice(++nextLinePosition);
-        importedRowCount++;
-
-        const parsedOffer = this.parseLineToOffer(completeRow);
-        this.emit('line', parsedOffer);
+    try {
+      for await (const line of rl) {
+        this.emit('line', line);
       }
+
+      this.emit('end');
+    } catch (error) {
+      this.emit('error', error);
+      throw error;
+    } finally {
+      await rl.close();
+      stream.close();
     }
-    this.emit('end', importedRowCount);
   }
 }

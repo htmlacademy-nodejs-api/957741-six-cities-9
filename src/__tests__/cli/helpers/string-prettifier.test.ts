@@ -1,34 +1,38 @@
-import chalk from 'chalk';
-import { StringPrettifier } from '../../../cli/helpers/index.js';
+import { describe, expect, jest, test } from '@jest/globals';
+import { StringPrettifier } from '../../../cli/helpers/string-prettifier.js';
+
+jest.mock('chalk', () => ({
+  blue: jest.fn((str) => `blue:${str}`),
+  red: jest.fn((str) => `red:${str}`),
+  green: jest.fn((str) => `green:${str}`),
+  gray: jest.fn((str) => `gray:${str}`),
+  italic: jest.fn((str) => `italic:${str}`),
+  bold: jest.fn((str) => `bold:${str}`)
+}));
 
 describe('StringPrettifier', () => {
-  test('formats error message in red', () => {
-    const message = 'Test error';
-    const result = StringPrettifier.error(message);
-    expect(result).toBe(chalk.red(message));
-  });
-
-  test('formats info message in blue', () => {
-    const message = 'Test info';
+  test('should format info message', () => {
+    const message = 'test info';
     const result = StringPrettifier.info(message);
-    expect(result).toBe(chalk.blue(message));
+    expect(result).toBe('blue:test info');
   });
 
-  test('formats success message in green', () => {
-    const message = 'Test success';
+  test('should format error message', () => {
+    const message = 'test error';
+    const result = StringPrettifier.error(message);
+    expect(result).toBe('red:test error');
+  });
+
+  test('should format success message', () => {
+    const message = 'test success';
     const result = StringPrettifier.success(message);
-    expect(result).toBe(chalk.green(message));
+    expect(result).toBe('green:test success');
   });
 
-  test('handles empty strings', () => {
-    expect(StringPrettifier.error('')).toBe(chalk.red(''));
-    expect(StringPrettifier.info('')).toBe(chalk.blue(''));
-    expect(StringPrettifier.success('')).toBe(chalk.green(''));
-  });
-
-  test('handles string conversion for input', () => {
-    const numberInput = 123;
-    expect(StringPrettifier.error(String(numberInput))).toBe(chalk.red('123'));
-    expect(StringPrettifier.info(String(numberInput))).toBe(chalk.blue('123'));
+  test('should handle empty strings', () => {
+    expect(StringPrettifier.info('')).toBe('blue:');
+    expect(StringPrettifier.error('')).toBe('red:');
+    expect(StringPrettifier.success('')).toBe('green:');
   });
 });
+
