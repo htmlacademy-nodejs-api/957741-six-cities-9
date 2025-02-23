@@ -1,10 +1,13 @@
 import { readdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Command } from '../commands/command.interface.js';
-import { isCommandConstructor } from './is-command-constructor.js';
 import Module from 'node:module';
+
+import { isCommandConstructor } from './is-command-constructor.js';
 import { StringPrettifier } from './string-prettifier.js';
+import { getErrorMessage } from '../../shared/helpers/index.js';
+
+import { Command } from '../commands/command.interface.js';
 
 const COMMANDS_DIR = '../commands';
 const COMMANDS_EXTENSION = '.command.ts';
@@ -24,9 +27,8 @@ export async function loadModules(): Promise<Module[]> {
     const modules = await Promise.all(absolutePathsToCommandFiles.map(async (path) => await import(path)));
     return modules;
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(StringPrettifier.error(error.message));
-    }
+
+    console.error(StringPrettifier.error(getErrorMessage(error)));
     throw error;
   }
 }

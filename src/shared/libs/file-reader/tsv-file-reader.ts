@@ -1,21 +1,13 @@
-import { readFileSync } from 'node:fs';
-
+import EventEmitter from 'node:events';
+import { createReadStream } from 'node:fs';
+import { createInterface } from 'node:readline';
 import { FileReader } from './file-reader.interface.js';
+import { Offer, HousingType, Amenity, City, Location, CityNames, User, UserType } from '../../types/index.js';
+import { FILE, PARSE, USER, OFFER } from '../../constants/index.js';
 
-import { Offer, HousingType, Amenity, City, Location, CityNames } from '../../types/offer.js';
-import { User, UserType } from '../../types/user.js';
-
-export class TSVFileReader implements FileReader {
-  private rawData = '';
-
-  constructor(
-    private readonly filename: string
-  ) {}
-
-  private validateRawData(): void {
-    if (! this.rawData) {
-      throw new Error('File was not read');
-    }
+export class TSVFileReader extends EventEmitter implements FileReader {
+  constructor(private readonly filename: string) {
+    super();
   }
 
   private parseLineToOffer(line: string): Offer {
@@ -37,7 +29,7 @@ export class TSVFileReader implements FileReader {
       user,
       commentsCount,
       location
-    ] = line.split('\t');
+    ] = line.split(FILE.SEPARATOR.TSV);
 
     return {
       title: title.trim(),
@@ -50,12 +42,12 @@ export class TSVFileReader implements FileReader {
       isFavorite: this.parseBoolean(isFavorite),
       rating: parseFloat(rating),
       type: this.parseHousingType(type),
-      rooms: parseInt(rooms, 10),
-      guests: parseInt(guests, 10),
-      price: parseInt(price, 10),
+      rooms: parseInt(rooms, PARSE.RADIX),
+      guests: parseInt(guests, PARSE.RADIX),
+      price: parseInt(price, PARSE.RADIX),
       amenities: this.parseAmenities(amenities),
       user: this.parseUser(user),
-      commentsCount: parseInt(commentsCount, 10),
+      commentsCount: parseInt(commentsCount, PARSE.RADIX),
       location: this.parseLocation(location)
     };
   }
@@ -65,7 +57,7 @@ export class TSVFileReader implements FileReader {
   }
 
   private parseCity(cityStr: string): City {
-    const [name, latStr, lngStr] = cityStr.split(',').map((s) => s.trim());
+    const [name, latStr, lngStr] = cityStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
     return {
       name: name as CityNames,
       location: {
@@ -76,15 +68,15 @@ export class TSVFileReader implements FileReader {
   }
 
   private parseImages(imagesStr: string): [string, string, string, string, string, string] {
-    const imgs = imagesStr.split(',').map((url) => url.trim());
-    if (imgs.length !== 6) {
+    const imgs = imagesStr.split(FILE.SEPARATOR.CSV).map((url) => url.trim());
+    if (imgs.length !== OFFER.IMAGES.COUNT) {
       throw new Error(`Некорректное количество изображений: ${imgs.length}`);
     }
     return imgs as [string, string, string, string, string, string];
   }
 
   private parseBoolean(boolStr: string): boolean {
-    return boolStr.trim().toLowerCase() === 'true';
+    return boolStr.trim().toLowerCase() === PARSE.BOOLEAN_TRUE;
   }
 
   private parseHousingType(typeStr: string): HousingType {
@@ -92,13 +84,12 @@ export class TSVFileReader implements FileReader {
   }
 
   private parseAmenities(amenitiesStr: string): Amenity[] {
-    return amenitiesStr.split(',').map((s) => s.trim().toLowerCase()) as Amenity[];
+    return amenitiesStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim().toLowerCase()) as Amenity[];
   }
 
   private parseUser(userStr: string): User {
-    // Ожидается формат: "name,email,avatar,password,userType"
-    const parts = userStr.split(',').map((s) => s.trim());
-    if (parts.length < 5) {
+    const parts = userStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
+    if (parts.length < USER.MIN_FIELDS) {
       throw new Error(`Некорректные данные пользователя: ${userStr}`);
     }
     const [name, email, avatar, password, userType] = parts;
@@ -106,26 +97,35 @@ export class TSVFileReader implements FileReader {
   }
 
   private parseLocation(locationStr: string): Location {
-    const [latStr, lngStr] = locationStr.split(',').map((s) => s.trim());
+    const [latStr, lngStr] = locationStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
     return {
       latitude: Number(latStr),
       longitude: Number(lngStr)
     };
   }
 
-  private parseRawDataToOffers(): Offer[] {
-    return this.rawData
-      .split('\n')
-      .filter((row) => row.trim().length > 0)
-      .map((line) => this.parseLineToOffer(line));
-  }
+  public async read(): Promise<void> {
+    const stream = createReadStream(this.filename, {
+      encoding: 'utf-8',
+    });
 
-  public read(): void {
-    this.rawData = readFileSync(this.filename, { encoding: 'utf-8' });
-  }
+    const rl = createInterface({
+      input: stream,
+      crlfDelay: Infinity
+    });
 
-  public toArray(): Offer[] {
-    this.validateRawData();
-    return this.parseRawDataToOffers();
+    try {
+      for await (const line of rl) {
+        this.emit('line', line);
+      }
+
+      this.emit('end');
+    } catch (error) {
+      this.emit('error', error);
+      throw error;
+    } finally {
+      await rl.close();
+      stream.close();
+    }
   }
 }

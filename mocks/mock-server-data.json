@@ -1,0 +1,358 @@
+{
+  "api": {
+    "offer": {
+      "titles": [
+        "Уютная квартира в центре города",
+        "Просторный дом с видом на море",
+        "Современные апартаменты в историческом районе",
+        "Стильный лофт возле парка",
+        "Роскошный пентхаус с террасой",
+        "Компактная студия рядом с метро",
+        "Семейный дом с большим садом",
+        "Видовые апартаменты в небоскребе"
+      ],
+      "descriptions": [
+        "Светлая и уютная квартира в самом сердце города. Идеальное расположение для путешественников.",
+        "Просторный дом с тремя спальнями, двумя ванными комнатами и полностью оборудованной кухней.",
+        "Современные апартаменты в историческом здании с высокими потолками и оригинальными деталями.",
+        "Стильный лофт с открытой планировкой, большими окнами и современной мебелью.",
+        "Роскошный пентхаус с панорамным видом на город и просторной террасой для отдыха.",
+        "Компактная и функциональная студия со всем необходимым для комфортного проживания.",
+        "Уютный семейный дом с четырьмя спальнями, игровой комнатой и ухоженным садом.",
+        "Видовые апартаменты на высоком этаже с современным дизайном и панорамными окнами."
+      ],
+      "postDates": [
+        "2024-01-15T12:00:00.000Z",
+        "2024-01-20T14:30:00.000Z",
+        "2024-02-01T09:15:00.000Z",
+        "2024-02-10T16:45:00.000Z",
+        "2024-02-15T11:20:00.000Z",
+        "2024-02-20T13:00:00.000Z",
+        "2024-02-25T10:30:00.000Z",
+        "2024-03-01T15:45:00.000Z"
+      ],
+      "cities": [
+        {
+          "name": "Paris",
+          "location": {
+            "latitude": 48.85661,
+            "longitude": 2.351499
+          }
+        },
+        {
+          "name": "Cologne",
+          "location": {
+            "latitude": 50.938361,
+            "longitude": 6.959974
+          }
+        },
+        {
+          "name": "Brussels",
+          "location": {
+            "latitude": 50.846557,
+            "longitude": 4.351697
+          }
+        },
+        {
+          "name": "Amsterdam",
+          "location": {
+            "latitude": 52.370216,
+            "longitude": 4.895168
+          }
+        },
+        {
+          "name": "Hamburg",
+          "location": {
+            "latitude": 53.550341,
+            "longitude": 10.000654
+          }
+        },
+        {
+          "name": "Dusseldorf",
+          "location": {
+            "latitude": 51.225402,
+            "longitude": 6.776314
+          }
+        }
+      ],
+      "previewImages": [
+        "apartment-01.jpg",
+        "house-01.jpg",
+        "apartment-02.jpg",
+        "loft-01.jpg",
+        "penthouse-01.jpg",
+        "studio-01.jpg",
+        "house-02.jpg",
+        "apartment-03.jpg"
+      ],
+      "images": [
+        [
+          "image-01.jpg",
+          "image-02.jpg",
+          "image-03.jpg",
+          "image-04.jpg",
+          "image-05.jpg",
+          "image-06.jpg"
+        ],
+        [
+          "image-07.jpg",
+          "image-08.jpg",
+          "image-09.jpg",
+          "image-10.jpg",
+          "image-11.jpg",
+          "image-12.jpg"
+        ],
+        [
+          "image-13.jpg",
+          "image-14.jpg",
+          "image-15.jpg",
+          "image-16.jpg",
+          "image-17.jpg",
+          "image-18.jpg"
+        ],
+        [
+          "image-19.jpg",
+          "image-20.jpg",
+          "image-21.jpg",
+          "image-22.jpg",
+          "image-23.jpg",
+          "image-24.jpg"
+        ],
+        [
+          "image-25.jpg",
+          "image-26.jpg",
+          "image-27.jpg",
+          "image-28.jpg",
+          "image-29.jpg",
+          "image-30.jpg"
+        ],
+        [
+          "image-31.jpg",
+          "image-32.jpg",
+          "image-33.jpg",
+          "image-34.jpg",
+          "image-35.jpg",
+          "image-36.jpg"
+        ],
+        [
+          "image-37.jpg",
+          "image-38.jpg",
+          "image-39.jpg",
+          "image-40.jpg",
+          "image-41.jpg",
+          "image-42.jpg"
+        ],
+        [
+          "image-43.jpg",
+          "image-44.jpg",
+          "image-45.jpg",
+          "image-46.jpg",
+          "image-47.jpg",
+          "image-48.jpg"
+        ]
+      ],
+      "isPremium": [
+        true,
+        false
+      ],
+      "isFavorite": [
+        true,
+        false
+      ],
+      "ratings": [
+        4.1,
+        4.5,
+        4.8,
+        4.2,
+        4.9,
+        4.3,
+        4.7,
+        4.4
+      ],
+      "types": [
+        "apartment",
+        "house",
+        "room",
+        "hotel"
+      ],
+      "rooms": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "guests": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10
+      ],
+      "prices": [
+        1500,
+        2500,
+        3500,
+        5000,
+        7500,
+        10000,
+        15000,
+        20000
+      ],
+      "amenities": [
+        [
+          "breakfast",
+          "air conditioning",
+          "laptop friendly workspace"
+        ],
+        [
+          "washer",
+          "towels",
+          "fridge"
+        ],
+        [
+          "breakfast",
+          "baby seat",
+          "washer"
+        ],
+        [
+          "air conditioning",
+          "laptop friendly workspace",
+          "fridge"
+        ],
+        [
+          "breakfast",
+          "washer",
+          "towels",
+          "fridge"
+        ],
+        [
+          "air conditioning",
+          "laptop friendly workspace",
+          "baby seat"
+        ],
+        [
+          "breakfast",
+          "washer",
+          "fridge",
+          "towels"
+        ],
+        [
+          "air conditioning",
+          "laptop friendly workspace",
+          "washer"
+        ]
+      ],
+      "commentsCount": [
+        0,
+        2,
+        5,
+        8,
+        10,
+        15,
+        20,
+        25
+      ],
+      "locations": [
+        {
+          "latitude": 48.85661,
+          "longitude": 2.351499
+        },
+        {
+          "latitude": 50.938361,
+          "longitude": 6.959974
+        },
+        {
+          "latitude": 50.846557,
+          "longitude": 4.351697
+        },
+        {
+          "latitude": 52.370216,
+          "longitude": 4.895168
+        },
+        {
+          "latitude": 53.550341,
+          "longitude": 10.000654
+        },
+        {
+          "latitude": 51.225402,
+          "longitude": 6.776314
+        }
+      ]
+    },
+    "user": {
+      "names": [
+        "Анна",
+        "Максим",
+        "Елена",
+        "Дмитрий",
+        "Ольга",
+        "Александр",
+        "Мария",
+        "Сергей"
+      ],
+      "emails": [
+        "anna@example.com",
+        "maxim@example.com",
+        "elena@example.com",
+        "dmitry@example.com",
+        "olga@example.com",
+        "alex@example.com",
+        "maria@example.com",
+        "sergey@example.com"
+      ],
+      "avatars": [
+        "avatar-01.jpg",
+        "avatar-02.jpg",
+        "avatar-03.jpg",
+        "avatar-04.jpg",
+        "avatar-05.jpg",
+        "avatar-06.jpg",
+        "avatar-07.jpg",
+        "avatar-08.jpg"
+      ],
+      "passwords": [
+        "pass123",
+        "qwerty456",
+        "secure789",
+        "pass1234",
+        "qwerty789",
+        "secure123",
+        "pass4567",
+        "qwerty123"
+      ],
+      "userTypes": [
+        "standard",
+        "pro"
+      ]
+    },
+    "comment": {
+      "texts": [
+        "Отличное место для отдыха! Всё соответствует описанию.",
+        "Прекрасное расположение, очень чисто и уютно.",
+        "Замечательные апартаменты, обязательно вернёмся снова.",
+        "Всё понравилось, хозяева очень гостеприимные.",
+        "Удобное расположение, рядом много магазинов и кафе.",
+        "Потрясающий вид из окна, всё необходимое есть.",
+        "Уютная квартира, полностью соответствует фотографиям.",
+        "Отличный вариант для семейного отдыха."
+      ],
+      "ratings": [
+        4.0,
+        4.2,
+        4.5,
+        4.7,
+        4.8,
+        4.9,
+        5.0,
+        4.6
+      ]
+    }
+  }
+}
