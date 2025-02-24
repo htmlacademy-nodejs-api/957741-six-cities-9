@@ -3,9 +3,7 @@ import dayjs from 'dayjs';
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/mock-server-data.type.js';
 import { generateRandomValue, getRandomItem } from '../../helpers/index.js';
-
-const FIRST_WEEK_DAY = 1;
-const LAST_WEEK_DAY = 7;
+import { TIME, FILE } from '../../../constants/index.js';
 
 export class TSVOfferGenerator implements OfferGenerator {
   constructor(private readonly mockData: MockServerData) { }
@@ -14,14 +12,14 @@ export class TSVOfferGenerator implements OfferGenerator {
     const title = getRandomItem<string>(this.mockData.offer.titles);
     const description = getRandomItem<string>(this.mockData.offer.descriptions);
     const postDate = dayjs()
-      .subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day')
+      .subtract(generateRandomValue(TIME.WEEK.FIRST_DAY, TIME.WEEK.LAST_DAY), 'day')
       .toISOString();
 
     const city = getRandomItem(this.mockData.offer.cities);
-    const cityString = `${city.name},${city.location.latitude},${city.location.longitude}`;
+    const cityString = `${city.name}${FILE.SEPARATOR.CSV}${city.location.latitude}${FILE.SEPARATOR.CSV}${city.location.longitude}`;
 
     const previewImage = getRandomItem<string>(this.mockData.offer.previewImages);
-    const images = getRandomItem<string[]>(this.mockData.offer.images).join(',');
+    const images = getRandomItem<string[]>(this.mockData.offer.images).join(FILE.SEPARATOR.CSV);
     const isPremium = getRandomItem<boolean>(this.mockData.offer.isPremium).toString();
     const isFavorite = getRandomItem<boolean>(this.mockData.offer.isFavorite).toString();
     const rating = getRandomItem<number>(this.mockData.offer.ratings).toString();
@@ -29,18 +27,17 @@ export class TSVOfferGenerator implements OfferGenerator {
     const rooms = getRandomItem<number>(this.mockData.offer.rooms).toString();
     const guests = getRandomItem<number>(this.mockData.offer.guests).toString();
     const price = getRandomItem<number>(this.mockData.offer.prices).toString();
-    const amenities = getRandomItem<string[]>(this.mockData.offer.amenities).join(',');
+    const amenities = getRandomItem<string[]>(this.mockData.offer.amenities).join(FILE.SEPARATOR.CSV);
     const commentsCount = getRandomItem<number>(this.mockData.offer.commentsCount).toString();
     const location = getRandomItem(this.mockData.offer.locations);
-    const locationString = `${location.latitude},${location.longitude}`;
+    const locationString = `${location.latitude}${FILE.SEPARATOR.CSV}${location.longitude}`;
 
-    // Создаем строку пользователя в формате "name,email,avatar,password,userType"
     const userName = getRandomItem<string>(this.mockData.user.names);
     const userEmail = getRandomItem<string>(this.mockData.user.emails);
     const userAvatar = getRandomItem<string>(this.mockData.user.avatars);
     const userPassword = getRandomItem<string>(this.mockData.user.passwords);
     const userType = getRandomItem<string>(this.mockData.user.userTypes);
-    const userString = [userName, userEmail, userAvatar, userPassword, userType].join(',');
+    const userString = [userName, userEmail, userAvatar, userPassword, userType].join(FILE.SEPARATOR.CSV);
 
     return [
       title,
@@ -60,6 +57,6 @@ export class TSVOfferGenerator implements OfferGenerator {
       userString,
       commentsCount,
       locationString
-    ].join('\t');
+    ].join(FILE.SEPARATOR.TSV);
   }
 }

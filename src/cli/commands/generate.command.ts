@@ -4,6 +4,7 @@ import { getErrorMessage } from '../../shared/helpers/index.js';
 import { TSVOfferGenerator } from '../../shared/libs/offer-generator/index.js';
 import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
 import { StringPrettifier } from '../helpers/string-prettifier.js';
+import { PARSE } from '../../constants/index.js';
 
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
@@ -34,14 +35,14 @@ export class GenerateCommand implements Command {
 
   public async execute(...parameters: string[]): Promise<void> {
     const [count, filepath, url] = parameters;
-    const offerCount = Number.parseInt(count, 10);
+    const offerCount = Number.parseInt(count, PARSE.RADIX);
 
     try {
       await this.load(url);
-    } catch (error: unknown) {
-      console.error('Can\'t generate data');
       await this.write(filepath, offerCount);
       console.info(`File ${filepath} was created!`);
+    } catch (error: unknown) {
+      console.error('Can\'t generate data');
       console.error(StringPrettifier.error(getErrorMessage(error)));
     }
   }
