@@ -6,6 +6,8 @@
 /docs/
 .idea/*
 
+/mocks/mock-server-data.tsv
 .DS_Store
 coverage
 *.log
+.env
