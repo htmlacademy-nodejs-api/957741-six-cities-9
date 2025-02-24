@@ -19,7 +19,6 @@ export class ImportCommand implements Command {
     console.info(`${count} rows imported.`);
   }
 
-
   public async execute(...parameters: string[]): Promise<void> {
     const [filename] = parameters;
     const fileReader = new TSVFileReader(filename.trim());

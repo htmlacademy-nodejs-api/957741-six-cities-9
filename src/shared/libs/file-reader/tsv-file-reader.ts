@@ -6,14 +6,11 @@ import { Offer, HousingType, Amenity, City, Location, CityNames } from '../../ty
 import { User, UserType } from '../../types/user.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
-  private CHUNK_SIZE = 16384; // 16KB
-
   constructor(
     private readonly filename: string
   ) {
     super();
   }
-
 
   private parseLineToOffer(line: string): Offer {
     const [

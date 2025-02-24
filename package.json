@@ -15,16 +15,23 @@
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm",
-    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost"
+    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost",
+    "test": "jest",
+    "prepare": "husky install",
+    "lint:fix": "eslint src/ --ext .ts --fix"
   },
   "devDependencies": {
+    "@types/jest": "29.5.12",
     "@types/node": "20.12.7",
     "@typescript-eslint/eslint-plugin": "6.7.0",
     "@typescript-eslint/parser": "6.7.0",
     "eslint": "8.49.0",
     "eslint-config-htmlacademy": "9.1.1",
+    "husky": "^9.0.11",
+    "jest": "29.7.0",
     "json-server": "1.0.0-beta.3",
     "rimraf": "5.0.1",
+    "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "tslib": "2.8.1",
     "typescript": "5.4.5"
