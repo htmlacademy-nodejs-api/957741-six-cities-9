@@ -5,6 +5,10 @@ import { Command } from './command.interface.js';
 export class HelpCommand implements Command {
   private commands: Record<string, Command> = {};
 
+  public getName(): CommandName {
+    return CommandName.HELP;
+  }
+
   public registerCommands(commandList: Command[]): void {
     commandList.forEach((command) => {
       if (Object.hasOwn(this.commands, command.getName())) {
@@ -12,10 +16,6 @@ export class HelpCommand implements Command {
       }
       this.commands[command.getName()] = command;
     });
-  }
-
-  public getName(): CommandName {
-    return CommandName.HELP;
   }
 
   public async execute(..._parameters: string[]): Promise<void> {
