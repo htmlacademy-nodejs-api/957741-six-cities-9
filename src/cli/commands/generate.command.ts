@@ -4,11 +4,11 @@ import { getErrorMessage } from '../../shared/helpers/index.js';
 import { TSVOfferGenerator } from '../../shared/libs/offer-generator/index.js';
 import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
 import { StringPrettifier } from '../helpers/string-prettifier.js';
-import { PARSE } from '../../constants/index.js';
+import { PARSE } from '../../shared/constants/index.js';
 
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
-import { MockServerData } from '../../shared/types/mock-server-data.type.js';
+import { MockServerData } from '../../shared/types/index.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;

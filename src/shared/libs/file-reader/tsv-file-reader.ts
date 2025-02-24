@@ -1,8 +1,7 @@
 import EventEmitter from 'node:events';
-import { FileReader } from './file-reader.interface.js';
 import { createReadStream } from 'node:fs';
-import { FILE_SYSTEM, FILE } from '../../../constants/index.js';
-
+import { FileReader } from './file-reader.interface.js';
+import { FILE_SYSTEM, FILE, PARSE, OFFER, USER } from '../../constants/index.js';
 import { Offer, HousingType, Amenity, City, Location, CityNames } from '../../types/offer.js';
 import { User, UserType } from '../../types/user.js';
 

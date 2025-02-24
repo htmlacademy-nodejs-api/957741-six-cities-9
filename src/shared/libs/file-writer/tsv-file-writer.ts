@@ -1,7 +1,6 @@
-import { WriteStream } from 'node:fs';
-import { createWriteStream } from 'node:fs';
+import { WriteStream, createWriteStream } from 'node:fs';
 import { FileWriter } from './file-writer.interface.js';
-import { FILE_SYSTEM, FILE } from '../../../constants/index.js';
+import { FILE_SYSTEM, FILE } from '../../constants/index.js';
 
 export class TSVFileWriter implements FileWriter {
   private stream: WriteStream;
