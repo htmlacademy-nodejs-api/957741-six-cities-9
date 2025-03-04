@@ -36,7 +36,7 @@ const CommandInfoData: CommandInfo[] = [
 const commandStrings = CommandInfoData.map(({ command, args }) => command + (args ? ` ${args}` : ''));
 const maxCommandLength = Math.max(...commandStrings.map((str) => str.length));
 
-const commandDescriptions = CommandInfoData.map(({command, args, comment}) => {
+const commandDescriptions = CommandInfoData.map(({ command, args, comment }) => {
   const commandLength = (command + (args ? `${args}` : '')).length;
   const separator = ' '.repeat(maxCommandLength - commandLength + 4);
   return `${StringPrettifier.code(command)} ${args ? StringPrettifier.code(args) : ''}${separator}${StringPrettifier.comment(comment)}`;

@@ -1,9 +1,11 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 import { FileReader } from './file-reader.interface.js';
-import { FILE_SYSTEM, FILE, PARSE, OFFER, USER } from '../../constants/index.js';
 import { Offer, HousingType, Amenity, City, Location, CityNames } from '../../types/offer.js';
 import { User, UserType } from '../../types/user.js';
+import { FILE_SYSTEM, FILE } from '../const.js';
+import { OFFER, USER } from './const.js';
+import { PARSE } from '../../constants/const.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   constructor(
@@ -72,7 +74,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   private parseImages(imagesStr: string): [string, string, string, string, string, string] {
     const imgs = imagesStr.split(FILE.SEPARATOR.CSV).map((url) => url.trim());
     if (imgs.length !== OFFER.IMAGES.COUNT) {
-      throw new Error(`Некорректное количество изображений: ${imgs.length}`);
+      throw new Error(`Invalid number of images: ${imgs.length}`);
     }
     return imgs as [string, string, string, string, string, string];
   }
@@ -92,7 +94,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   private parseUser(userStr: string): User {
     const parts = userStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
     if (parts.length < USER.MIN_FIELDS) {
-      throw new Error(`Некорректные данные пользователя: ${userStr}`);
+      throw new Error(`Invalid user data: ${userStr}`);
     }
     const [name, email, avatar, password, userType] = parts;
     return { name, email, avatar, password, userType: userType as UserType };

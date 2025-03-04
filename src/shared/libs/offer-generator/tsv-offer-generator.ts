@@ -3,7 +3,8 @@ import dayjs from 'dayjs';
 import { OfferGenerator } from './offer-generator.interface.js';
 import { MockServerData } from '../../types/index.js';
 import { generateRandomValue, getRandomItem } from '../../helpers/index.js';
-import { TIME, FILE } from '../../constants/index.js';
+import { TIME } from './const.js';
+import { FILE } from '../const.js';
 
 export class TSVOfferGenerator implements OfferGenerator {
   constructor(private readonly mockData: MockServerData) { }

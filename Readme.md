@@ -1,7 +1,7 @@
 # Личный проект «Шесть городов»
 
 * Студент: [Юрий Последов](https://up.htmlacademy.ru/nodejs-api/9/user/957741).
-* Наставник: [Илиас Эззахид](https://htmlacademy.ru/profile/id2588943).
+* Наставник: [Константин Ильин](https://htmlacademy.ru/profile/id2374827).
 
 ---
 

@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-import { getClassFromModule, loadModules } from './cli/helpers/load-commands.js';
+import { ImportCommand, GenerateCommand, HelpCommand, VersionCommand } from './cli/commands/index.js';
 import { CLIApplication } from './cli/index.js';
 
 async function bootstrap() {
-  const modules = await loadModules();
-  const commandsClasses = modules.map((module) => getClassFromModule(module));
-  const instances = commandsClasses.map((cls) => new cls());
-
   const cliApplication = new CLIApplication();
-  cliApplication.registerCommands(instances);
+  cliApplication.registerCommands([
+    new VersionCommand(),
+    new HelpCommand(),
+    new ImportCommand(),
+    new GenerateCommand(),
+  ]);
   cliApplication.processCommand(process.argv);
 }
 
