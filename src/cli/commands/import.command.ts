@@ -3,7 +3,7 @@ import { getErrorMessage } from '../../shared/helpers/index.js';
 import { StringPrettifier } from '../helpers/string-prettifier.js';
 import { validateImportCommandParams } from '../helpers/validators.js';
 
-import { Offer } from '../../shared/types/offer.js';
+import { Offer } from '../../shared/types/offer.type.js';
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
 
