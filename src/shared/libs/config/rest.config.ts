@@ -5,14 +5,14 @@ import { configRestSchema, RestSchema } from './rest.schema.js';
 
 import { Logger } from '../logger/logger.interface.js';
 import { Config } from './config.interface.js';
-import { Component } from '../../types/index.js';
+import { COMPONENT_MAP } from '../../types/index.js';
 
 @injectable()
 export class RestConfig implements Config<RestSchema> {
   private readonly config: RestSchema;
 
   constructor(
-    @inject(Component.Logger) private readonly logger: Logger
+    @inject(COMPONENT_MAP.LOGGER) private readonly logger: Logger
   ) {
     const parsedOutput = config();
 
@@ -24,6 +24,7 @@ export class RestConfig implements Config<RestSchema> {
     configRestSchema.validate({ allowed: 'strict', output: this.logger.info });
 
     this.config = configRestSchema.getProperties();
+    this.logger.info('RestConfig created…');
     this.logger.info('.env file found and successfully parsed!');
   }
 

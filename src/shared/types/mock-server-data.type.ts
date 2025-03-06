@@ -1,5 +1,5 @@
-import { City, HousingType, Amenity, Location } from './offer.type.js';
-import { UserType } from './user.type.js';
+import { City, HOUSING_TYPE, AMENITY, Location } from './offer.type.js';
+import { USER_TYPE } from './user.type.js';
 
 export type MockServerData = {
   offer: {
@@ -12,11 +12,11 @@ export type MockServerData = {
     isPremium: boolean[];
     isFavorite: boolean[];
     ratings: number[];
-    types: HousingType[];
+    types: HOUSING_TYPE[];
     rooms: number[];
     guests: number[];
     prices: number[];
-    amenities: Amenity[][];
+    amenities: AMENITY[][];
     commentsCount: number[];
     locations: Location[];
   };
@@ -25,7 +25,7 @@ export type MockServerData = {
     emails: string[];
     avatars: string[];
     passwords: string[];
-    userTypes: UserType[];
+    userTypes: USER_TYPE[];
   };
   comment: {
     texts: string[];
