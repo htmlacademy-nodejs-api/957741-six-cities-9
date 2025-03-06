@@ -1,4 +1,6 @@
 import { fileURLToPath, resolve } from 'node:url';
+import { dirname } from 'node:path';
+import { existsSync, mkdirSync } from 'node:fs';
 import { Logger as PinoInstance, pino, transport } from 'pino';
 
 import { Logger } from './logger.interface.js';
@@ -10,6 +12,11 @@ export class PinoLogger implements Logger {
     const modulePath = fileURLToPath(new URL('.', import.meta.url));
     const logFilePath = '../../../logs/rest.log';
     const destination = resolve(modulePath, logFilePath);
+    const destinationDir = dirname(destination);
+    // Если директория не существует, создаем её рекурсивно
+    if (!existsSync(destinationDir)) {
+      mkdirSync(destinationDir, { recursive: true });
+    }
 
     const multiTransport = transport({
       targets: [
