@@ -4,11 +4,12 @@ import { getErrorMessage } from '../../shared/helpers/index.js';
 import { TSVOfferGenerator } from '../../shared/libs/offer-generator/index.js';
 import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
 import { StringPrettifier } from '../helpers/string-prettifier.js';
-import { PARSE } from '../../shared/constants/index.js';
+import { validateGenerateCommandParams } from '../helpers/validators.js';
 
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
 import { MockServerData } from '../../shared/types/index.js';
+import { PARSE } from '../../shared/constants/const.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
@@ -34,6 +35,8 @@ export class GenerateCommand implements Command {
   }
 
   public async execute(...parameters: string[]): Promise<void> {
+    validateGenerateCommandParams(parameters);
+
     const [count, filepath, url] = parameters;
     const offerCount = Number.parseInt(count, PARSE.RADIX);
 

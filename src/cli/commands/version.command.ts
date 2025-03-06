@@ -7,29 +7,29 @@ type PackageJSONConfig = {
   version: string;
 }
 
-function isPackageJSONConfig(value: unknown): value is PackageJSONConfig {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    !Array.isArray(value) &&
-    Object.hasOwn(value, 'version')
-  );
-}
-
 export class VersionCommand implements Command {
   constructor(
     private readonly filePath: string = 'package.json'
-  ) {}
+  ) { }
 
   public getName(): CommandName {
     return CommandName.VERSION;
+  }
+
+  private isPackageJSONConfig(value: unknown): value is PackageJSONConfig {
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      !Array.isArray(value) &&
+      Object.hasOwn(value, 'version')
+    );
   }
 
   private async readVersion(): Promise<string> {
     const jsonContent = await readFile(resolve(this.filePath), 'utf-8');
     const importedContent: unknown = JSON.parse(jsonContent);
 
-    if (!isPackageJSONConfig(importedContent)) {
+    if (!this.isPackageJSONConfig(importedContent)) {
       throw new Error('Failed to parse json content.');
     }
 
