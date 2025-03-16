@@ -1,8 +1,8 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 import { FileReader } from './file-reader.interface.js';
-import { Offer, HOUSING_TYPE, AMENITY, City, Location, CITY_NAME } from '../../types/offer.type.js';
-import { User, USER_TYPE } from '../../types/user.type.js';
+import { Offer, HousingType, Amenity, City, Location, CityName } from '../../types/offer.type.js';
+import { User, UserType } from '../../types/user.type.js';
 import { FILE_SYSTEM, FILE } from '../const.js';
 import { OFFER, USER } from './const.js';
 import { Parse } from '../../constants/const.js';
@@ -63,7 +63,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   private parseCity(cityStr: string): City {
     const [name, latStr, lngStr] = cityStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
     return {
-      name: name as CITY_NAME,
+      name: name as CityName,
       location: {
         latitude: Number(latStr),
         longitude: Number(lngStr)
@@ -83,12 +83,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     return boolStr.trim().toLowerCase() === Parse.BOOLEAN_TRUE;
   }
 
-  private parseHousingType(typeStr: string): HOUSING_TYPE {
-    return typeStr.trim().toLowerCase() as HOUSING_TYPE;
+  private parseHousingType(typeStr: string): HousingType {
+    return typeStr.trim().toLowerCase() as HousingType;
   }
 
-  private parseAmenities(amenitiesStr: string): AMENITY[] {
-    return amenitiesStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim().toLowerCase()) as AMENITY[];
+  private parseAmenities(amenitiesStr: string): Amenity[] {
+    return amenitiesStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim().toLowerCase()) as Amenity[];
   }
 
   private parseUser(userStr: string): User {
@@ -97,7 +97,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       throw new Error(`Invalid user data: ${userStr}`);
     }
     const [name, email, avatar, password, userType] = parts;
-    return { name, email, avatar, password, userType: userType as USER_TYPE };
+    return { name, email, avatar, password, userType: userType as UserType };
   }
 
   private parseLocation(locationStr: string): Location {
