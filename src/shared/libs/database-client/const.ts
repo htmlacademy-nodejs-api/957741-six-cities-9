@@ -1,0 +1,1 @@
+export const CONNECTIONT_READY_STATE = 1;
