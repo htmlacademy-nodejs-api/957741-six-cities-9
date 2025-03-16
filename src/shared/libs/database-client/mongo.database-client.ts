@@ -1,9 +1,10 @@
 import * as Mongoose from 'mongoose';
 import { inject, injectable } from 'inversify';
+import { setTimeout } from 'node:timers/promises';
 
 import { DatabaseClient } from './database-client.interface.js';
 import { Logger } from '../logger/index.js';
-import { CONNECTIONT_READY_STATE } from './const.js';
+import { MONGO_SETUP } from './const.js';
 
 import { COMPONENT_MAP } from '../../types/index.js';
 
@@ -16,7 +17,7 @@ export class MongoDatabaseClient implements DatabaseClient {
   ) { }
 
   public isConnectedToDatabase() {
-    return this.mongoose?.connection?.readyState === CONNECTIONT_READY_STATE;
+    return this.mongoose?.connection?.readyState === MONGO_SETUP.CONNECTIONT_READY_STATE;
   }
 
   public async connect(uri: string): Promise<void> {
@@ -26,9 +27,21 @@ export class MongoDatabaseClient implements DatabaseClient {
 
     this.logger.info('Trying to connect to MongoDB…');
 
-    this.mongoose = await Mongoose.connect(uri);
+    let attempt = 0;
+    while (attempt < MONGO_SETUP.RETRY_COUNT) {
+      try {
+        this.mongoose = await Mongoose.connect(uri);
+        this.logger.info('Database connection established.');
+        return;
+      } catch (error) {
+        attempt++;
+        this.logger.error(`Failed to connect to the database. Attempt ${attempt}`, error as Error);
+        await setTimeout(MONGO_SETUP.RETRY_TIMEOUT);
+      }
+    }
 
     this.logger.info('Database connection established.');
+    throw new Error(`Unable to establish database connection after ${MONGO_SETUP.RETRY_COUNT}`);
   }
 
   public async disconnect(): Promise<void> {
