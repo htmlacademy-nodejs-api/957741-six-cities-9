@@ -1,19 +1,13 @@
-export enum USER_TYPE {
-  STANDARD = 'standard',
+export enum UserType {
+  REGULAR = 'regular',
   PRO = 'pro',
 }
 
 export interface User {
   name: string;
   email: string;
-  avatar?: string;
+  avatar: string;
   password: string;
-  userType: USER_TYPE;
+  userType: UserType;
 }
 
-export interface Comment {
-  text: string;
-  date: string;
-  rating: number;
-  user: User;
-}

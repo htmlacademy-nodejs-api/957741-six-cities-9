@@ -1,3 +1,5 @@
+import { Char } from '../constants/const.js';
+
 export const FILE_SYSTEM = {
   CHUNK_SIZE: 16384,
   ENCODING: 'utf-8',
@@ -9,9 +11,9 @@ export const FILE_SYSTEM = {
 
 export const FILE = {
   SEPARATOR: {
-    TSV: '\t',
-    CSV: ',',
-    NEW_LINE: '\n'
+    TSV: Char.TAB,
+    CSV: Char.COMMA,
+    NEW_LINE: Char.NEW_LINE,
   },
   EXTENSION: {
     TSV: '.tsv',

@@ -1,5 +1,5 @@
 export const COMPONENT_MAP = {
-  REST_APPLICATION: Symbol.for('RestApplication'),
-  LOGGER: Symbol.for('Logger'),
-  CONFIG: Symbol.for('Config'),
+  REST_APPLICATION: Symbol(),
+  LOGGER: Symbol(),
+  CONFIG: Symbol(),
 } as const;
