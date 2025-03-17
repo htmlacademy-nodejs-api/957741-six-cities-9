@@ -26,5 +26,4 @@ const userSchema = new Schema({
   lastname: String,
 }, { timestamps: true });
 
-
 export const UserModel = model<UserDocument>('User', userSchema);
