@@ -29,7 +29,7 @@ export class UserEntity implements User {
     this.avatar = userData.avatar;
     this.name = userData.name;
     this.userType = userData.userType;
-    this.password = createSHA256(this.password, salt);
+    this.password = createSHA256(userData.password, salt);
   }
 }
 
