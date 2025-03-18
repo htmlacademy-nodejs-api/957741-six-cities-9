@@ -1,4 +1,4 @@
-import { Container, ContainerModule } from 'inversify';
+import { ContainerModule } from 'inversify';
 
 import { RestApplication } from './rest.application.js';
 import { COMPONENT_MAP } from '../shared/types/index.js';

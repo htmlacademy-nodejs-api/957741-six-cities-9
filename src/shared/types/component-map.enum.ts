@@ -3,4 +3,5 @@ export const COMPONENT_MAP = {
   LOGGER: Symbol(),
   CONFIG: Symbol(),
   DATABESE_CLIENT: Symbol(),
+  USER_SERVICE: Symbol(),
 } as const;
