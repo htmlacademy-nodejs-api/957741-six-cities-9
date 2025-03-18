@@ -1,11 +1,12 @@
 import { ContainerModule } from 'inversify';
+import { types } from '@typegoose/typegoose';
 
 import { COMPONENT_MAP } from '../../types/index.js';
-import { DefaultUserService } from './default-user.service.js';
-import { RestApplication } from '../../../rest/rest.application.js';
+import { UserEntity, UserModel, UserService, DefaultUserService } from './index.js';
 
 export function createUserContainer() {
   return new ContainerModule(({ bind }) => {
-    bind<RestApplication>(COMPONENT_MAP.USER_SERVICE).to(DefaultUserService).inSingletonScope();
+    bind<UserService>(COMPONENT_MAP.USER_SERVICE).to(DefaultUserService).inSingletonScope();
+    bind<types.ModelType<UserEntity>>(COMPONENT_MAP.USER_MODEL).toConstantValue(UserModel);
   });
 }
