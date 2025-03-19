@@ -9,7 +9,7 @@ import { validateGenerateCommandParams } from '../helpers/validators.js';
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
 import { MockServerData } from '../../shared/types/index.js';
-import { PARSE } from '../../shared/constants/const.js';
+import { Parse } from '../../shared/constants/const.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
@@ -38,7 +38,7 @@ export class GenerateCommand implements Command {
     validateGenerateCommandParams(parameters);
 
     const [count, filepath, url] = parameters;
-    const offerCount = Number.parseInt(count, PARSE.RADIX);
+    const offerCount = Number.parseInt(count, Parse.RADIX);
 
     try {
       await this.load(url);

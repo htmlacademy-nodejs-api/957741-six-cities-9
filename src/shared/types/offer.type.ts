@@ -1,6 +1,6 @@
 import { User } from './user.type.js';
 
-export enum CITY_NAME {
+export enum CityName {
   PARIS = 'Paris',
   COLOGNE = 'Cologne',
   BRUSSELS = 'Brussels',
@@ -15,11 +15,11 @@ export interface Location {
 }
 
 export interface City {
-  name: CITY_NAME;
+  name: CityName;
   location: Location
 }
 
-export enum AMENITY {
+export enum Amenity {
   BREAKFAST = 'breakfast',
   AIR_CONDITIONING = 'air conditioning',
   LAPTOP_FRIENDLY_WORKSPACE = 'laptop friendly workspace',
@@ -29,12 +29,14 @@ export enum AMENITY {
   FRIDGE = 'fridge'
 }
 
-export enum HOUSING_TYPE {
+export enum HousingType {
   APARTMENT = 'apartment',
   HOUSE = 'house',
   ROOM = 'room',
   HOTEL = 'hotel'
 }
+
+export type OfferImages = [string, string, string, string, string, string]
 
 export interface Offer {
   title: string;
@@ -42,15 +44,15 @@ export interface Offer {
   postDate: Date;
   city: City;
   previewImage: string;
-  images: [string, string, string, string, string, string];
+  images: OfferImages;
   isPremium: boolean;
   isFavorite: boolean;
   rating: number;
-  type: HOUSING_TYPE;
+  type: HousingType;
   rooms: number;
   guests: number;
   price: number;
-  amenities: AMENITY[];
+  amenities: Amenity[];
   user: User;
   commentsCount?: number;
   location: Location;

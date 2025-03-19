@@ -1,11 +1,12 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
+import { createInterface } from 'node:readline';
 import { FileReader } from './file-reader.interface.js';
-import { Offer, HOUSING_TYPE, AMENITY, City, Location, CITY_NAME } from '../../types/offer.type.js';
-import { User, USER_TYPE } from '../../types/user.type.js';
+import { Offer, HousingType, Amenity, City, Location, CityName, OfferImages } from '../../types/offer.type.js';
+import { User, UserType } from '../../types/user.type.js';
 import { FILE_SYSTEM, FILE } from '../const.js';
 import { OFFER, USER } from './const.js';
-import { PARSE } from '../../constants/const.js';
+import { Parse } from '../../constants/const.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   constructor(
@@ -46,12 +47,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       isFavorite: this.parseBoolean(isFavorite),
       rating: parseFloat(rating),
       type: this.parseHousingType(type),
-      rooms: parseInt(rooms, PARSE.RADIX),
-      guests: parseInt(guests, PARSE.RADIX),
-      price: parseInt(price, PARSE.RADIX),
+      rooms: parseInt(rooms, Parse.RADIX),
+      guests: parseInt(guests, Parse.RADIX),
+      price: parseInt(price, Parse.RADIX),
       amenities: this.parseAmenities(amenities),
       user: this.parseUser(user),
-      commentsCount: parseInt(commentsCount, PARSE.RADIX),
+      commentsCount: parseInt(commentsCount, Parse.RADIX),
       location: this.parseLocation(location)
     };
   }
@@ -63,7 +64,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   private parseCity(cityStr: string): City {
     const [name, latStr, lngStr] = cityStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim());
     return {
-      name: name as CITY_NAME,
+      name: name as CityName,
       location: {
         latitude: Number(latStr),
         longitude: Number(lngStr)
@@ -71,24 +72,24 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     };
   }
 
-  private parseImages(imagesStr: string): [string, string, string, string, string, string] {
+  private parseImages(imagesStr: string): OfferImages {
     const imgs = imagesStr.split(FILE.SEPARATOR.CSV).map((url) => url.trim());
     if (imgs.length !== OFFER.IMAGES.COUNT) {
       throw new Error(`Invalid number of images: ${imgs.length}`);
     }
-    return imgs as [string, string, string, string, string, string];
+    return imgs as OfferImages;
   }
 
   private parseBoolean(boolStr: string): boolean {
-    return boolStr.trim().toLowerCase() === PARSE.BOOLEAN_TRUE;
+    return boolStr.trim().toLowerCase() === Parse.BOOLEAN_TRUE;
   }
 
-  private parseHousingType(typeStr: string): HOUSING_TYPE {
-    return typeStr.trim().toLowerCase() as HOUSING_TYPE;
+  private parseHousingType(typeStr: string): HousingType {
+    return typeStr.trim().toLowerCase() as HousingType;
   }
 
-  private parseAmenities(amenitiesStr: string): AMENITY[] {
-    return amenitiesStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim().toLowerCase()) as AMENITY[];
+  private parseAmenities(amenitiesStr: string): Amenity[] {
+    return amenitiesStr.split(FILE.SEPARATOR.CSV).map((s) => s.trim().toLowerCase()) as Amenity[];
   }
 
   private parseUser(userStr: string): User {
@@ -96,8 +97,8 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     if (parts.length < USER.MIN_FIELDS) {
       throw new Error(`Invalid user data: ${userStr}`);
     }
-    const [name, email, avatar, password, userType] = parts;
-    return { name, email, avatar, password, userType: userType as USER_TYPE };
+    const [name, email, avatarUrl, password, userType] = parts;
+    return { name, email, avatarUrl, password, userType: userType as UserType };
   }
 
   private parseLocation(locationStr: string): Location {
@@ -114,21 +115,20 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       encoding: FILE_SYSTEM.ENCODING,
     });
 
-    let remainingData = '';
-    let nextLinePosition = -1;
+    const lineReader = createInterface({
+      input: readStream,
+      crlfDelay: Infinity // Распознает все типы разделителей строк
+    });
+
     let importedRowCount = 0;
 
-    for await (const chunk of readStream) {
-      remainingData += chunk.toString();
+    for await (const line of lineReader) {
+      importedRowCount++;
+      const parsedOffer = this.parseLineToOffer(line);
 
-      while ((nextLinePosition = remainingData.indexOf(FILE.SEPARATOR.NEW_LINE)) >= 0) {
-        const completeRow = remainingData.slice(0, nextLinePosition + 1);
-        remainingData = remainingData.slice(++nextLinePosition);
-        importedRowCount++;
-
-        const parsedOffer = this.parseLineToOffer(completeRow);
-        this.emit('line', parsedOffer);
-      }
+      await new Promise<void>((resolve) => {
+        this.emit('line', parsedOffer, resolve);
+      });
     }
     this.emit('end', importedRowCount);
   }

@@ -1,0 +1,5 @@
+export const MONGO_SETUP = {
+  RETRY_COUNT: 5,
+  RETRY_TIMEOUT: 1000,
+  CONNECTIONT_READY_STATE: 1
+} as const;
