@@ -1,5 +1,6 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
+import { createInterface } from 'node:readline';
 import { FileReader } from './file-reader.interface.js';
 import { Offer, HousingType, Amenity, City, Location, CityName, OfferImages } from '../../types/offer.type.js';
 import { User, UserType } from '../../types/user.type.js';
@@ -114,21 +115,20 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       encoding: FILE_SYSTEM.ENCODING,
     });
 
-    let remainingData = '';
-    let nextLinePosition = -1;
+    const lineReader = createInterface({
+      input: readStream,
+      crlfDelay: Infinity // Распознает все типы разделителей строк
+    });
+
     let importedRowCount = 0;
 
-    for await (const chunk of readStream) {
-      remainingData += chunk.toString();
+    for await (const line of lineReader) {
+      importedRowCount++;
+      const parsedOffer = this.parseLineToOffer(line);
 
-      while ((nextLinePosition = remainingData.indexOf(FILE.SEPARATOR.NEW_LINE)) >= 0) {
-        const completeRow = remainingData.slice(0, nextLinePosition + 1);
-        remainingData = remainingData.slice(++nextLinePosition);
-        importedRowCount++;
-
-        const parsedOffer = this.parseLineToOffer(completeRow);
-        this.emit('line', parsedOffer);
-      }
+      await new Promise<void>((resolve) => {
+        this.emit('line', parsedOffer, resolve);
+      });
     }
     this.emit('end', importedRowCount);
   }

@@ -27,6 +27,12 @@ export function validateImportCommandParams(params: string[]): void {
     throw new Error('Import command requires exactly one parameter: the filename.');
   }
   validateNotEmpty(params[0], 'filename');
+  validateNotEmpty(params[1], 'login');
+  validateNotEmpty(params[2], 'password');
+  validateNotEmpty(params[3], 'host');
+  validateNotEmpty(params[4], 'dbname');
+  validateNotEmpty(params[5], 'dbport');
+  validateNotEmpty(params[6], 'salt');
 }
 
 export function validateGenerateCommandParams(params: string[]): { count: number; filepath: string; url: string } {

@@ -5,6 +5,7 @@ import { RestApplication } from './rest/index.js';
 import { COMPONENT_MAP } from './shared/types/index.js';
 import { createRestApplicationModule } from './rest/rest.container.js';
 import { createUserContainer } from './shared/modules/user/index.js';
+import { createOfferContainer } from './shared/modules/offer/offer.container.js';
 
 async function bootstrap() {
   const appContainer = new Container();
@@ -12,6 +13,7 @@ async function bootstrap() {
   appContainer.load(
     createRestApplicationModule(),
     createUserContainer(),
+    createOfferContainer(),
   );
 
   const application = appContainer.get<RestApplication>(COMPONENT_MAP.REST_APPLICATION);
