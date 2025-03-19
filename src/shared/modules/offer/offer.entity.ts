@@ -5,14 +5,22 @@ import {
   Ref
 } from '@typegoose/typegoose';
 import { UserEntity, } from '../user/index.js';
-import { Location, CityName, HousingType, Amenity } from '../../types/index.js';
+import { Location, HousingType, Amenity, City, CityName } from '../../types/index.js';
 
 export class OfferLocation implements Location {
-  @prop({ required: true })
+  @prop()
   public latitude: number;
 
-  @prop({ required: true })
+  @prop()
   public longitude: number;
+}
+
+export class OfferСity implements City {
+  @prop()
+  public name: CityName;
+
+  @prop({ type: () => OfferLocation })
+  public location: Location;
 }
 
 @modelOptions({
@@ -31,8 +39,8 @@ export class OfferEntity {
   @prop()
   public postDate: Date;
 
-  @prop()
-  public city: CityName;
+  @prop({ type: () => OfferСity })
+  public city: City;
 
   @prop()
   public previewImage: string;
@@ -67,7 +75,7 @@ export class OfferEntity {
   @prop()
   public commentsCount: number;
 
-  @prop({ ref: () => OfferLocation })
+  @prop({ type: () => OfferLocation })
   public location: Location;
 }
 
