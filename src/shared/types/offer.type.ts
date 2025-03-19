@@ -36,13 +36,15 @@ export enum HousingType {
   HOTEL = 'hotel'
 }
 
+export type OfferImages = [string, string, string, string, string, string]
+
 export interface Offer {
   title: string;
   description: string;
   postDate: Date;
   city: City;
   previewImage: string;
-  images: [string, string, string, string, string, string];
+  images: OfferImages;
   isPremium: boolean;
   isFavorite: boolean;
   rating: number;

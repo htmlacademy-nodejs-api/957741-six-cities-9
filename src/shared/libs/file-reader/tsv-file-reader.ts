@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 import { FileReader } from './file-reader.interface.js';
-import { Offer, HousingType, Amenity, City, Location, CityName } from '../../types/offer.type.js';
+import { Offer, HousingType, Amenity, City, Location, CityName, OfferImages } from '../../types/offer.type.js';
 import { User, UserType } from '../../types/user.type.js';
 import { FILE_SYSTEM, FILE } from '../const.js';
 import { OFFER, USER } from './const.js';
@@ -71,12 +71,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     };
   }
 
-  private parseImages(imagesStr: string): [string, string, string, string, string, string] {
+  private parseImages(imagesStr: string): OfferImages {
     const imgs = imagesStr.split(FILE.SEPARATOR.CSV).map((url) => url.trim());
     if (imgs.length !== OFFER.IMAGES.COUNT) {
       throw new Error(`Invalid number of images: ${imgs.length}`);
     }
-    return imgs as [string, string, string, string, string, string];
+    return imgs as OfferImages;
   }
 
   private parseBoolean(boolStr: string): boolean {
@@ -96,8 +96,8 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     if (parts.length < USER.MIN_FIELDS) {
       throw new Error(`Invalid user data: ${userStr}`);
     }
-    const [name, email, avatar, password, userType] = parts;
-    return { name, email, avatar, password, userType: userType as UserType };
+    const [name, email, avatarUrl, password, userType] = parts;
+    return { name, email, avatarUrl, password, userType: userType as UserType };
   }
 
   private parseLocation(locationStr: string): Location {

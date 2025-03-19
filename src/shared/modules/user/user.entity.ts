@@ -9,24 +9,24 @@ import { createSHA256 } from '../../helpers/index.js';
   }
 })
 export class UserEntity implements User {
-  @prop({ unique: true, required: true })
-  public email!: string;
+  @prop()
+  public email: string;
 
-  @prop({ default: '' })
-  public avatar!: string;
+  @prop()
+  public avatarUrl: string;
 
-  @prop({ required: true, default: '' })
-  public name!: string;
+  @prop()
+  public name: string;
 
-  @prop({ required: true, default: '' })
-  public password!: string;
+  @prop()
+  public password: string;
 
-  @prop({ required: true, default: '' })
-  public userType!: UserType;
+  @prop()
+  public userType: UserType;
 
   constructor(userData: User, salt: string) {
     this.email = userData.email;
-    this.avatar = userData.avatar;
+    this.avatarUrl = userData.avatarUrl;
     this.name = userData.name;
     this.userType = userData.userType;
     this.password = createSHA256(userData.password, salt);

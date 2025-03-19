@@ -7,6 +7,8 @@ import { CreateUserDto } from './dto/create-user.dto.js';
 import { COMPONENT_MAP } from '../../types/component-map.enum.js';
 import { Logger } from '../../libs/logger/index.js';
 
+import { Nullable } from '../../types/help.type.js';
+
 @injectable()
 export class DefaultUserService implements UserService {
   constructor(
@@ -23,8 +25,12 @@ export class DefaultUserService implements UserService {
     return result;
   }
 
-  public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
+  public async findByEmail(email: string): Promise<Nullable<DocumentType<UserEntity>>> {
     return this.userModel.findOne({ email });
+  }
+
+  public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel.findById(userId);
   }
 
   public async findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
