@@ -3,7 +3,7 @@ import { City, Amenity, Location, HousingType, OfferImages } from '../../../type
 export class CreateOfferDto {
   public title: string;
   public description: string;
-  public postDate: Date;
+  public createdAt: Date;
   public city: City;
   public previewImage: string;
   public images: OfferImages;
@@ -14,7 +14,7 @@ export class CreateOfferDto {
   public guests: number;
   public price: number;
   public amenities: Amenity[];
-  public userId: string;
+  public authorId: string;
   public commentsCount?: number;
   public location: Location;
 }
