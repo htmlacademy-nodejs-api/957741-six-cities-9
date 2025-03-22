@@ -41,7 +41,7 @@ export type OfferImages = [string, string, string, string, string, string]
 export interface Offer {
   title: string;
   description: string;
-  postDate: Date;
+  createdAt: Date;
   city: City;
   previewImage: string;
   images: OfferImages;

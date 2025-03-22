@@ -19,7 +19,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     const [
       title,
       description,
-      postDate,
+      createdAt,
       city,
       previewImage,
       images,
@@ -39,7 +39,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     return {
       title: title.trim(),
       description: description.trim(),
-      postDate: this.parsePostDate(postDate),
+      createdAt: this.parseCreatedAt(createdAt),
       city: this.parseCity(city),
       previewImage: previewImage.trim(),
       images: this.parseImages(images),
@@ -57,8 +57,8 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     };
   }
 
-  private parsePostDate(postDate: string): Date {
-    return new Date(postDate.trim());
+  private parseCreatedAt(createdAt: string): Date {
+    return new Date(createdAt.trim());
   }
 
   private parseCity(cityStr: string): City {

@@ -36,9 +36,6 @@ export class OfferEntity {
   @prop()
   public description: string;
 
-  @prop()
-  public postDate: Date;
-
   @prop({ type: () => OfferСity })
   public city: City;
 
