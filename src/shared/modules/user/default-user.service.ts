@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto.js';
 import { COMPONENT_MAP } from '../../types/component-map.enum.js';
 import { Logger } from '../../libs/logger/index.js';
 
-import { Nullable } from '../../types/help.type.js';
+import { Nullable } from '../../types/index.js';
 
 @injectable()
 export class DefaultUserService implements UserService {

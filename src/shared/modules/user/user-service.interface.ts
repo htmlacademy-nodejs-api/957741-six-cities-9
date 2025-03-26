@@ -3,7 +3,7 @@ import { DocumentType } from '@typegoose/typegoose';
 import { UserEntity } from './user.entity.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 
-import { Nullable } from '../../types/help.type.js';
+import { Nullable } from '../../types/index.js';
 
 export interface UserService {
   create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>>;
