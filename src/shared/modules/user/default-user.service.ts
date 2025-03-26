@@ -1,4 +1,4 @@
-import { DocumentType, types } from '@typegoose/typegoose';
+import { DocumentType, mongoose, types } from '@typegoose/typegoose';
 import { injectable, inject } from 'inversify';
 
 import { UserService } from './user-service.interface.js';
@@ -45,6 +45,12 @@ export class DefaultUserService implements UserService {
     return this.create(dto, salt);
   }
 
+  public async exists (userId: string): Promise<boolean> {
+    return this.userModel
+      .exists({_id: userId})
+      .then(Boolean);
+  }
+
   public async updateById (userId: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
     return this.userModel
       .findByIdAndUpdate(userId, dto, { new: true })
@@ -64,11 +70,16 @@ export class DefaultUserService implements UserService {
 
     return this.userModel.aggregate([
       {
+        $match: {
+          _id: new mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
         $lookup: {
           from: 'offers',
           localField: 'favorites',
           foreignField: '_id',
-          as: 'favoriteOffers', // или offers?
+          as: 'favoriteOffers',
         },
       },
       {

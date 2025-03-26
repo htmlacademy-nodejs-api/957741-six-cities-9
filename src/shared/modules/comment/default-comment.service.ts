@@ -13,7 +13,7 @@ export class DefaultCommentService implements CommentService {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) private readonly logger: Logger,
     @inject(COMPONENT_MAP.OFFER_SERVICE) private readonly offerService: OfferService,
-    @inject(COMPONENT_MAP.OFFER_MODEL) private readonly commentModel: types.ModelType<CommentEntity>
+    @inject(COMPONENT_MAP.COMMENT_MODEL) private readonly commentModel: types.ModelType<CommentEntity>
   ) { }
 
   public async create(dto: CreateCommentDto): Promise<DocumentType<CommentEntity>> {
@@ -23,7 +23,7 @@ export class DefaultCommentService implements CommentService {
     const { offerId, rating: newRating } = dto;
     await this.offerService.incCommentCountAndUpdateRating(offerId, newRating);
 
-    return comment.populate('userId');
+    return comment.populate('authorId');
   }
 
   public async findByOfferId (offerId: string): Promise<DocumentType<CommentEntity>[]> {
@@ -31,6 +31,6 @@ export class DefaultCommentService implements CommentService {
       .find({ offerId })
       .sort({ createdAt: SortType.Down })
       .limit(COMMENT_COUNT)
-      .populate('userId');
+      .populate('authorId');
   }
 }

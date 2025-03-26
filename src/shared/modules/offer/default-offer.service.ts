@@ -25,7 +25,7 @@ export class DefaultOfferService implements OfferService {
   public async findById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findById(offerId)
-      .populate(['userId'])
+      .populate(['authorId'])
       .exec();
   }
 
@@ -36,7 +36,7 @@ export class DefaultOfferService implements OfferService {
       .find()
       .sort({ createdAt: SortType.Down })
       .limit(limit)
-      .populate(['userId'])
+      .populate(['authorId'])
       .exec();
   }
 
@@ -45,7 +45,7 @@ export class DefaultOfferService implements OfferService {
       .find({ city, isPremium: true })
       .sort({ createdAt: SortType.Down })
       .limit(OFFER_COUNT.PREMIUM)
-      .populate(['userId'])
+      .populate(['authorId'])
       .exec();
   }
 
@@ -58,33 +58,33 @@ export class DefaultOfferService implements OfferService {
   public async updateById (offerId: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, {new: true})
-      .populate(['userId'])
+      .populate(['authorId'])
       .exec();
   }
 
   public async exists (documentId: string): Promise<boolean> {
     return this.offerModel
       .exists({_id: documentId})
-      .then((r) => !!r);
+      .then(Boolean);
   }
 
-  public async incCommentCountAndUpdateRating (offerId: string, newRating: number): Promise<DocumentType<OfferEntity> | null> {
+  public async incCommentCountAndUpdateRating(offerId: string, newRating: number): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .findByIdAndUpdate(
-        offerId, {
-          $inc: {
-            commentCount: 1,
-            totalRating: newRating,
+        offerId,
+        [
+          {
+            $set: {
+              commentsCount: { $add: ['$commentCount', 1] },
+              ratingSum: { $add: ['$ratingSum', newRating] },
+            }
           },
-          $set: {
-            rating: {
-              $divide: [
-                { $add: ['$totalRating', newRating] },
-                { $add: ['$commentCount', 1] }
-              ]
-            },
-          },
-        },
+          {
+            $set: {
+              rating: { $divide: ['$ratingSum', '$commentCount'] }
+            }
+          }
+        ],
         { new: true }
       )
       .exec();

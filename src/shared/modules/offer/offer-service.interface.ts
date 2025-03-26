@@ -12,5 +12,5 @@ export interface OfferService {
   deleteById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>>;
   updateById(offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>>;
   incCommentCountAndUpdateRating(offerId: string, newRating: number): Promise<Nullable<DocumentType<OfferEntity>>>;
-  exists(documentId: string): Promise<boolean>;
+  exists(offerId: string): Promise<boolean>;
 }

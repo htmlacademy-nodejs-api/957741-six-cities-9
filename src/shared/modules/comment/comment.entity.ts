@@ -21,7 +21,7 @@ export class CommentEntity {
   public rating: number;
 
   @prop({ ref: () => UserEntity })
-  public userId: Ref<UserEntity>;
+  public authorId: Ref<UserEntity>;
 
   @prop({ ref: () => OfferEntity })
   public offerId: Ref<OfferEntity>;
