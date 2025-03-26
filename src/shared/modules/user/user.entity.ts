@@ -1,6 +1,7 @@
-import { getModelForClass, prop, modelOptions } from '@typegoose/typegoose';
+import { getModelForClass, prop, modelOptions, Ref } from '@typegoose/typegoose';
 import { User, UserType } from '../../types/index.js';
 import { createSHA256 } from '../../helpers/index.js';
+import { OfferEntity } from '../offer/index.js';
 
 @modelOptions({
   schemaOptions: {
@@ -23,6 +24,13 @@ export class UserEntity implements User {
 
   @prop()
   public userType: UserType;
+
+  @prop({
+    ref: () => OfferEntity,
+    required: true,
+    default: [],
+  })
+  public favorites?: Ref<OfferEntity>[];
 
   constructor(userData: User, salt: string) {
     this.email = userData.email;

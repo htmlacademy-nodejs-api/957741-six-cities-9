@@ -1,5 +1,3 @@
-import { Char } from '../constants/const.js';
-
 export function generateRandomValue(min: number, max: number, numAfterDigit = 0) {
   return +((Math.random() * (max - min)) + min).toFixed(numAfterDigit);
 }
@@ -15,5 +13,5 @@ export function getRandomItem<T>(items: T[]): T {
 }
 
 export function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : Char.EMPTY;
+  return error instanceof Error ? error.message : '';
 }

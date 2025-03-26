@@ -1,13 +1,13 @@
-import { Char, Parse } from '../../shared/constants/const.js';
+import { PARSE } from '../../shared/constants/const.js';
 
 export function validateNotEmpty(value: string, fieldName: string): void {
-  if (!value || value.trim() === Char.EMPTY) {
+  if (!value || value.trim() === '') {
     throw new Error(`The parameter "${fieldName}" should not be empty.`);
   }
 }
 
 export function validateIsNumber(value: string, fieldName: string): number {
-  const numberValue = Number.parseInt(value, Parse.RADIX);
+  const numberValue = Number.parseInt(value, PARSE.RADIX);
   if (Number.isNaN(numberValue)) {
     throw new Error(`The parameter "${fieldName}" must be a valid number.`);
   }

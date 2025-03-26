@@ -1,6 +1,6 @@
 import { City, Amenity, Location, HousingType, OfferImages } from '../../../types/index.js';
 
-export class CreateOfferDto {
+export class UpdateOfferDto {
   public title: string;
   public description: string;
   public city: City;

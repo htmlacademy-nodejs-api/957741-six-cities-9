@@ -16,12 +16,12 @@ export class MongoDatabaseClient implements DatabaseClient {
     @inject(COMPONENT_MAP.LOGGER) private readonly logger: Logger
   ) { }
 
-  public isConnectedToDatabase() {
+  public isConnected() {
     return this.mongoose?.connection?.readyState === MONGO_SETUP.CONNECTIONT_READY_STATE;
   }
 
   public async connect(uri: string): Promise<void> {
-    if (this.isConnectedToDatabase()) {
+    if (this.isConnected()) {
       throw new Error('MongoDB client already connected');
     }
 
@@ -45,7 +45,7 @@ export class MongoDatabaseClient implements DatabaseClient {
   }
 
   public async disconnect(): Promise<void> {
-    if (!this.isConnectedToDatabase()) {
+    if (!this.isConnected()) {
       throw new Error('Not connected to the database');
     }
 

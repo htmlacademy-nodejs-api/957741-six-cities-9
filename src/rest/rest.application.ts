@@ -33,10 +33,6 @@ export class RestApplication {
     this.logger.info(`Get value from env $PORT: ${this.config.get('PORT')}`);
     this.logger.info(`Get value from env $SALT: ${this.config.get('SALT')}`);
     this.logger.info(`Get value from env $DB_HOST: ${this.config.get('DB_HOST')}`);
-    this.logger.info(`Get value from env $DB_PORT: ${this.config.get('DB_PORT')}`);
-    this.logger.info(`Get value from env $DB_NAME: ${this.config.get('DB_NAME')}`);
-    this.logger.info(`Get value from env $DB_USER: ${this.config.get('DB_USER')}`);
-    this.logger.info(`Get value from env $DB_PASSWORD: ${this.config.get('DB_PASSWORD')}`);
 
     this.logger.info('Init database…');
     await this.initDb();

@@ -2,10 +2,11 @@ import { inject, injectable } from 'inversify';
 import { DocumentType, types } from '@typegoose/typegoose';
 
 import { Logger } from '../../libs/logger/index.js';
-import { OfferService, CreateOfferDto, OfferEntity } from './index.js';
-import { COMPONENT_MAP } from '../../types/index.js';
+import { OfferService, CreateOfferDto, OfferEntity, UpdateOfferDto } from './index.js';
+import { City, COMPONENT_MAP } from '../../types/index.js';
 
-import { Nullable } from '../../types/help.type.js';
+import { Nullable, SortType } from '../../types/index.js';
+import { OFFER_COUNT } from './const.js';
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -22,6 +23,70 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async findById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
-    return this.offerModel.findById(offerId).exec();
+    return this.offerModel
+      .findById(offerId)
+      .populate(['authorId'])
+      .exec();
+  }
+
+  public async find (count?: number): Promise<DocumentType<OfferEntity>[]> {
+    const limit = count ? Math.min(count, OFFER_COUNT.MAX) : OFFER_COUNT.DEFAULT;
+
+    return this.offerModel
+      .find()
+      .sort({ createdAt: SortType.Down })
+      .limit(limit)
+      .populate(['authorId'])
+      .exec();
+  }
+
+  public async findPremium (city: City): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .find({ city, isPremium: true })
+      .sort({ createdAt: SortType.Down })
+      .limit(OFFER_COUNT.PREMIUM)
+      .populate(['authorId'])
+      .exec();
+  }
+
+  public async deleteById (offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
+    return this.offerModel
+      .findByIdAndDelete(offerId)
+      .exec();
+  }
+
+  public async updateById (offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>> {
+    return this.offerModel
+      .findByIdAndUpdate(offerId, dto, {new: true})
+      .populate(['authorId'])
+      .exec();
+  }
+
+  public async exists (documentId: string): Promise<boolean> {
+    return this.offerModel
+      .exists({_id: documentId})
+      .then(Boolean);
+  }
+
+  public async incCommentCountAndUpdateRating(offerId: string, newRating: number): Promise<Nullable<DocumentType<OfferEntity>>> {
+    return this.offerModel
+      .findByIdAndUpdate(
+        offerId,
+        [
+          {
+            $set: {
+              commentsCount: { $add: ['$commentCount', 1] },
+              ratingSum: { $add: ['$ratingSum', newRating] },
+            }
+          },
+          {
+            $set: {
+              rating: { $divide: ['$ratingSum', '$commentCount'] }
+            }
+          }
+        ],
+        { new: true }
+      )
+      .exec();
   }
 }

@@ -3,13 +3,12 @@ import got from 'got';
 import { getErrorMessage } from '../../shared/helpers/index.js';
 import { TSVOfferGenerator } from '../../shared/libs/offer-generator/index.js';
 import { TSVFileWriter } from '../../shared/libs/file-writer/index.js';
-import { StringPrettifier } from '../helpers/string-prettifier.js';
 import { validateGenerateCommandParams } from '../helpers/validators.js';
 
 import { Command } from './command.interface.js';
 import { CommandName } from '../constants.js';
 import { MockServerData } from '../../shared/types/index.js';
-import { Parse } from '../../shared/constants/const.js';
+import { PARSE } from '../../shared/constants/const.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
@@ -38,7 +37,7 @@ export class GenerateCommand implements Command {
     validateGenerateCommandParams(parameters);
 
     const [count, filepath, url] = parameters;
-    const offerCount = Number.parseInt(count, Parse.RADIX);
+    const offerCount = Number.parseInt(count, PARSE.RADIX);
 
     try {
       await this.load(url);
@@ -46,7 +45,7 @@ export class GenerateCommand implements Command {
       console.info(`File ${filepath} was created!`);
     } catch (error: unknown) {
       console.error('Can\'t generate data');
-      console.error(StringPrettifier.error(getErrorMessage(error)));
+      console.error(getErrorMessage(error));
     }
   }
 }

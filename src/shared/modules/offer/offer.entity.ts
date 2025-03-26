@@ -48,28 +48,31 @@ export class OfferEntity {
   @prop()
   public isPremium: boolean;
 
-  @prop()
+  @prop({default: 0})
+  public ratingSum: number;
+
+  @prop({default: 0})
   public rating: number;
 
   @prop()
   public type: HousingType;
 
-  @prop()
+  @prop({default: 0})
   public rooms: number;
 
-  @prop()
+  @prop({default: 0})
   public guests: number;
 
-  @prop()
+  @prop({default: 0})
   public price: number;
 
   @prop({ type: () => [String] })
   public amenities: Amenity[];
 
   @prop({ ref: () => UserEntity })
-  public userId: Ref<UserEntity>;
+  public authorId: Ref<UserEntity>;
 
-  @prop()
+  @prop({default: 0})
   public commentsCount: number;
 
   @prop({ type: () => OfferLocation })

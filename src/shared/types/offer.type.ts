@@ -36,7 +36,7 @@ export enum HousingType {
   HOTEL = 'hotel'
 }
 
-export type OfferImages = [string, string, string, string, string, string]
+export type OfferImages = string[]
 
 export interface Offer {
   title: string;
