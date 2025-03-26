@@ -3,8 +3,6 @@ import { CommandName } from '../constants.js';
 import { Command } from './command.interface.js';
 
 export class HelpCommand implements Command {
-  private commands: Record<string, Command> = {};
-
   public getName(): CommandName {
     return CommandName.HELP;
   }
