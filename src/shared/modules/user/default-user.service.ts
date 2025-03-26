@@ -31,7 +31,7 @@ export class DefaultUserService implements UserService {
     return this.userModel.findOne({ email });
   }
 
-  public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
+  public async findById(userId: string): Promise<Nullable<DocumentType<UserEntity>>> {
     return this.userModel.findById(userId);
   }
 
@@ -51,10 +51,26 @@ export class DefaultUserService implements UserService {
       .then(Boolean);
   }
 
-  public async updateById (userId: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+  public async updateById (userId: string, dto: UpdateUserDto): Promise<Nullable<DocumentType<UserEntity>>> {
     return this.userModel
       .findByIdAndUpdate(userId, dto, { new: true })
       .exec();
+  }
+
+  public async addToFavorites(userId: string, offerId: string): Promise<Nullable<DocumentType<UserEntity>>> {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $addToSet: { favorites: new mongoose.Types.ObjectId(offerId) } },
+      { new: true }
+    ).exec();
+  }
+
+  public async removeFromFavorites(userId: string, offerId: string): Promise<Nullable<DocumentType<UserEntity>>> {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $pull: { favorites: new mongoose.Types.ObjectId(offerId) } },
+      { new: true }
+    ).exec();
   }
 
   public async findFavorites(userId: string,): Promise<DocumentType<OfferEntity>[]> {

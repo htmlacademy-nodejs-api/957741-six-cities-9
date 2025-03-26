@@ -49,13 +49,13 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async deleteById (offerId: string): Promise<DocumentType<OfferEntity> | null> {
+  public async deleteById (offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findByIdAndDelete(offerId)
       .exec();
   }
 
-  public async updateById (offerId: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
+  public async updateById (offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, {new: true})
       .populate(['authorId'])
@@ -68,7 +68,7 @@ export class DefaultOfferService implements OfferService {
       .then(Boolean);
   }
 
-  public async incCommentCountAndUpdateRating(offerId: string, newRating: number): Promise<DocumentType<OfferEntity> | null> {
+  public async incCommentCountAndUpdateRating(offerId: string, newRating: number): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findByIdAndUpdate(
         offerId,
