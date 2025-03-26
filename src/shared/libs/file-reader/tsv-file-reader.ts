@@ -6,7 +6,7 @@ import { Offer, HousingType, Amenity, City, Location, CityName, OfferImages } fr
 import { User, UserType } from '../../types/user.type.js';
 import { FILE_SYSTEM, FILE } from '../const.js';
 import { OFFER, USER } from './const.js';
-import { Parse } from '../../constants/const.js';
+import { PARSE } from '../../constants/const.js';
 
 export class TSVFileReader extends EventEmitter implements FileReader {
   constructor(
@@ -47,12 +47,12 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       isFavorite: this.parseBoolean(isFavorite),
       rating: parseFloat(rating),
       type: this.parseHousingType(type),
-      rooms: parseInt(rooms, Parse.RADIX),
-      guests: parseInt(guests, Parse.RADIX),
-      price: parseInt(price, Parse.RADIX),
+      rooms: parseInt(rooms, PARSE.RADIX),
+      guests: parseInt(guests, PARSE.RADIX),
+      price: parseInt(price, PARSE.RADIX),
       amenities: this.parseAmenities(amenities),
       user: this.parseUser(user),
-      commentsCount: parseInt(commentsCount, Parse.RADIX),
+      commentsCount: parseInt(commentsCount, PARSE.RADIX),
       location: this.parseLocation(location)
     };
   }
@@ -81,7 +81,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
   }
 
   private parseBoolean(boolStr: string): boolean {
-    return boolStr.trim().toLowerCase() === Parse.BOOLEAN_TRUE;
+    return boolStr.trim().toLowerCase() === PARSE.BOOLEAN_TRUE;
   }
 
   private parseHousingType(typeStr: string): HousingType {

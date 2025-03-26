@@ -91,3 +91,15 @@ npm start
 - `npm run mock:server` - Запуск мок-сервера
   - Поднимает JSON Server на порту 3123
   - Использует данные из ./mocks/mock-server-data.json
+
+
+## Набор консольных комманд для упрощения работы
+
+Запуск мок сервера
+`npm run mock:server`
+
+Генерация данных tsv
+`npm run ts ./src/main.cli.ts -- --generate 1000 ./mocks/mock-server-data.tsv http://localhost:3123/api`
+
+Перенос данных из tsv в DB
+`npm run ts ./src/main.cli.ts -- --import ./mocks/mock-server-data.tsv admin test localhost six-cities 27017 qwerty`

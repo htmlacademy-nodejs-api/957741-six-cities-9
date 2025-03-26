@@ -1,6 +1,5 @@
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 import { getErrorMessage, getMongoURI } from '../../shared/helpers/index.js';
-import { StringPrettifier } from '../helpers/string-prettifier.js';
 import { validateImportCommandParams } from '../helpers/validators.js';
 
 import { Offer } from '../../shared/types/offer.type.js';
@@ -85,7 +84,7 @@ export class ImportCommand implements Command {
       fileReader.read();
     } catch (error) {
       console.error(`Can't import data from file: ${filename}`);
-      console.error(StringPrettifier.error(getErrorMessage(error)));
+      console.error(getErrorMessage(error));
     }
   }
 }

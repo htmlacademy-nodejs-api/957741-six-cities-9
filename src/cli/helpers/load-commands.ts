@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import Module from 'node:module';
 
 import { isCommandConstructor } from './is-command-constructor.js';
-import { StringPrettifier } from './string-prettifier.js';
 import { getErrorMessage } from '../../shared/helpers/index.js';
 
 import { Command } from '../commands/command.interface.js';
@@ -28,7 +27,7 @@ export async function loadModules(): Promise<Module[]> {
     return modules;
   } catch (error) {
 
-    console.error(StringPrettifier.error(getErrorMessage(error)));
+    console.error(getErrorMessage(error));
     throw error;
   }
 }
@@ -45,7 +44,7 @@ export function getClassFromModule(module: Module): ClassFromModule {
     }
   } catch (error) {
     if (error instanceof Error) {
-      console.error(StringPrettifier.error(error.message));
+      console.error(error.message);
     }
     throw error;
   }
