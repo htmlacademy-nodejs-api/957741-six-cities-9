@@ -6,6 +6,7 @@ import { Logger } from '../shared/libs/logger/index.js';
 import { COMPONENT_MAP } from '../shared/types/index.js';
 import { DatabaseClient } from '../shared/libs/database-client/index.js';
 import { getMongoURI } from '../shared/helpers/index.js';
+import { Controller } from '../shared/libs/rest/index.js';
 
 @injectable()
 export class RestApplication {
@@ -15,6 +16,9 @@ export class RestApplication {
     @inject(COMPONENT_MAP.LOGGER) private readonly logger: Logger,
     @inject(COMPONENT_MAP.CONFIG) private readonly config: Config<RestSchema>,
     @inject(COMPONENT_MAP.DATABESE_CLIENT) private readonly databaseClient: DatabaseClient,
+    @inject(COMPONENT_MAP.USER_CONTROLLER) private readonly userController: Controller,
+    @inject(COMPONENT_MAP.OFFER_CONTROLLER) private readonly offerController: Controller,
+    @inject(COMPONENT_MAP.COMMENT_CONTROLLER) private readonly commentController: Controller,
   ) {
     this.logger.info('RestApplication created…');
     this.server = express();
@@ -37,12 +41,22 @@ export class RestApplication {
     this.server.listen(port);
   }
 
+  private async _initControllers() {
+    this.server.use('/users', this.userController.router);
+    this.server.use('/offers', this.offerController.router);
+    this.server.use('/comments', this.commentController.router);
+  }
+
   public async init() {
     this.logger.info('Application initialization');
 
     this.logger.info('Init database…');
     await this.initDb();
     this.logger.info('Init database completed');
+
+    this.logger.info('Init controllers');
+    await this._initControllers();
+    this.logger.info('Controller initialization completed');
 
     this.logger.info('Try to init server…');
     await this._initServer();
