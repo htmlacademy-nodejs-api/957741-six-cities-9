@@ -6,7 +6,7 @@ import { Logger } from '../shared/libs/logger/index.js';
 import { COMPONENT_MAP } from '../shared/types/index.js';
 import { DatabaseClient } from '../shared/libs/database-client/index.js';
 import { getMongoURI } from '../shared/helpers/index.js';
-import { Controller } from '../shared/libs/rest/index.js';
+import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
 
 @injectable()
 export class RestApplication {
@@ -19,6 +19,7 @@ export class RestApplication {
     @inject(COMPONENT_MAP.USER_CONTROLLER) private readonly userController: Controller,
     @inject(COMPONENT_MAP.OFFER_CONTROLLER) private readonly offerController: Controller,
     @inject(COMPONENT_MAP.COMMENT_CONTROLLER) private readonly commentController: Controller,
+    @inject(COMPONENT_MAP.EXCEPTION_FILTER) private readonly appExceptionFilter: ExceptionFilter,
   ) {
     this.logger.info('RestApplication created…');
     this.server = express();
@@ -45,6 +46,10 @@ export class RestApplication {
     this.server.use(express.json());
   }
 
+  private async _initExceptionFilters() {
+    this.server.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
+  }
+
   private async _initControllers() {
     this.server.use('/users', this.userController.router);
     this.server.use('/offers', this.offerController.router);
@@ -65,6 +70,10 @@ export class RestApplication {
     this.logger.info('Init controllers');
     await this._initControllers();
     this.logger.info('Controller initialization completed');
+
+    this.logger.info('Init exception filters');
+    await this._initExceptionFilters();
+    this.logger.info('Exception filters initialization compleated');
 
     this.logger.info('Try to init server…');
     await this._initServer();

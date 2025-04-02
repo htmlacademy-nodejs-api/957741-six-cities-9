@@ -12,4 +12,5 @@ export const COMPONENT_MAP = {
   COMMENT_SERVICE: Symbol(),
   COMMENT_MODEL: Symbol(),
   COMMENT_CONTROLLER: Symbol(),
+  EXCEPTION_FILTER: Symbol(),
 } as const;
