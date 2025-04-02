@@ -7,3 +7,5 @@ export { BaseController } from './controller/base-controller.abstract.js';
 export { UserController } from './controller/user.controller.js';
 export { OfferController } from './controller/offer.controller.js';
 export { CommentController } from './controller/comment.controller.js';
+
+export { ExceptionFilter } from './exception-filter/exception-filter.interface.js';
