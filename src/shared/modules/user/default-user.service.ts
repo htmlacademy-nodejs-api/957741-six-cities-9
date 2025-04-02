@@ -45,13 +45,13 @@ export class DefaultUserService implements UserService {
     return this.create(dto, salt);
   }
 
-  public async exists (userId: string): Promise<boolean> {
+  public async exists(userId: string): Promise<boolean> {
     return this.userModel
-      .exists({_id: userId})
+      .exists({ _id: userId })
       .then(Boolean);
   }
 
-  public async updateById (userId: string, dto: UpdateUserDto): Promise<Nullable<DocumentType<UserEntity>>> {
+  public async updateById(userId: string, dto: UpdateUserDto): Promise<Nullable<DocumentType<UserEntity>>> {
     return this.userModel
       .findByIdAndUpdate(userId, dto, { new: true })
       .exec();
@@ -73,7 +73,7 @@ export class DefaultUserService implements UserService {
     ).exec();
   }
 
-  public async findFavorites(userId: string,): Promise<DocumentType<OfferEntity>[]> {
+  public async findFavorites(userId: string): Promise<DocumentType<OfferEntity>[]> {
     const user = await this.userModel.findById(userId).exec();
 
     if (!user) {

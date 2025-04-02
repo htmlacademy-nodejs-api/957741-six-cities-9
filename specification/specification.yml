@@ -242,7 +242,7 @@ paths:
         "404":
           description: "Предложение не найдено"
 
-  /offers/{offerId}/comments:
+  /comments/offers/{offerId}:
     get:
       tags:
         - Comments
@@ -299,7 +299,7 @@ paths:
         "400":
           description: "Ошибка валидации данных"
 
-  /favorites:
+  /users/favorites:
     get:
       tags:
         - Favorites
@@ -318,8 +318,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/offerListItem"
 
-  /favorites/{offerId}:
-    post:
+  /users/favorites/{offerId}:
+    put:
       tags:
         - Favorites
       summary: "Добавление предложения в избранное"

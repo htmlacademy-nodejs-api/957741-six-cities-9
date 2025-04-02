@@ -20,13 +20,12 @@ export class DefaultCommentService implements CommentService {
     const comment = await this.commentModel.create(dto);
     this.logger.info(`New comment created: ${comment._id}`);
 
-    const { offerId, rating: newRating } = dto;
-    await this.offerService.incCommentCountAndUpdateRating(offerId, newRating);
+    await this.offerService.incCommentCountAndUpdateRating(comment.offerId._id.toString(), comment.rating);
 
     return comment.populate('authorId');
   }
 
-  public async findByOfferId (offerId: string): Promise<DocumentType<CommentEntity>[]> {
+  public async findByOfferId(offerId: string): Promise<DocumentType<CommentEntity>[]> {
     return this.commentModel
       .find({ offerId })
       .sort({ createdAt: SortType.Down })
