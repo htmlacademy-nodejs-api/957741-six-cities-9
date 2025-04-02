@@ -9,3 +9,4 @@ export { OfferController } from './controller/offer.controller.js';
 export { CommentController } from './controller/comment.controller.js';
 
 export { ExceptionFilter } from './exception-filter/exception-filter.interface.js';
+export { AppExceptionFilter } from './exception-filter/app-exception-filter.js';
