@@ -18,6 +18,12 @@ export const configRestSchema = convict<RestSchema>({
     env: 'SALT',
     default: null
   },
+  HOST: {
+    doc: 'IP address of the server (Express)',
+    format: 'ipaddress',
+    env: 'HOST',
+    default: null
+  },
   DB_HOST: {
     doc: 'IP address of the database server (MongoDB)',
     format: 'ipaddress',

@@ -10,16 +10,18 @@ import { Logger } from '../../libs/logger/index.js';
 import { Nullable } from '../../types/index.js';
 import { UpdateUserDto } from './index.js';
 import { OfferEntity } from '../offer/index.js';
+import { Config, RestSchema } from '../../libs/config/index.js';
 
 @injectable()
 export class DefaultUserService implements UserService {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) private readonly logger: Logger,
+    @inject(COMPONENT_MAP.CONFIG) private readonly config: Config<RestSchema>,
     @inject(COMPONENT_MAP.USER_MODEL) private readonly userModel: types.ModelType<UserEntity>
   ) { }
 
-  public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const user = new UserEntity(dto, salt);
+  public async create(dto: CreateUserDto): Promise<DocumentType<UserEntity>> {
+    const user = new UserEntity(dto, this.config.get('SALT'));
 
     const result = await this.userModel.create(user);
     this.logger.info(`New user created: ${user.email}`);
@@ -35,23 +37,23 @@ export class DefaultUserService implements UserService {
     return this.userModel.findById(userId);
   }
 
-  public async findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
+  public async findOrCreate(dto: CreateUserDto): Promise<DocumentType<UserEntity>> {
     const existedUser = await this.findByEmail(dto.email);
 
     if (existedUser) {
       return existedUser;
     }
 
-    return this.create(dto, salt);
+    return this.create(dto);
   }
 
-  public async exists (userId: string): Promise<boolean> {
+  public async exists(userId: string): Promise<boolean> {
     return this.userModel
-      .exists({_id: userId})
+      .exists({ _id: userId })
       .then(Boolean);
   }
 
-  public async updateById (userId: string, dto: UpdateUserDto): Promise<Nullable<DocumentType<UserEntity>>> {
+  public async updateById(userId: string, dto: UpdateUserDto): Promise<Nullable<DocumentType<UserEntity>>> {
     return this.userModel
       .findByIdAndUpdate(userId, dto, { new: true })
       .exec();
@@ -73,7 +75,7 @@ export class DefaultUserService implements UserService {
     ).exec();
   }
 
-  public async findFavorites(userId: string,): Promise<DocumentType<OfferEntity>[]> {
+  public async findFavorites(userId: string): Promise<DocumentType<OfferEntity>[]> {
     const user = await this.userModel.findById(userId).exec();
 
     if (!user) {

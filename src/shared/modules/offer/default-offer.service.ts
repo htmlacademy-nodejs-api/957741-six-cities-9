@@ -29,8 +29,8 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async find (count?: number): Promise<DocumentType<OfferEntity>[]> {
-    const limit = count ? Math.min(count, OFFER_COUNT.MAX) : OFFER_COUNT.DEFAULT;
+  public async find(userLimit?: number): Promise<DocumentType<OfferEntity>[]> {
+    const limit = userLimit ? Math.min(userLimit, OFFER_COUNT.MAX) : OFFER_COUNT.DEFAULT;
 
     return this.offerModel
       .find()
@@ -40,7 +40,7 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async findPremium (city: City): Promise<DocumentType<OfferEntity>[]> {
+  public async findPremium(city: City): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel
       .find({ city, isPremium: true })
       .sort({ createdAt: SortType.Down })
@@ -49,22 +49,22 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async deleteById (offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
+  public async deleteById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findByIdAndDelete(offerId)
       .exec();
   }
 
-  public async updateById (offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>> {
+  public async updateById(offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
-      .findByIdAndUpdate(offerId, dto, {new: true})
+      .findByIdAndUpdate(offerId, dto, { new: true })
       .populate(['authorId'])
       .exec();
   }
 
-  public async exists (documentId: string): Promise<boolean> {
+  public async exists(documentId: string): Promise<boolean> {
     return this.offerModel
-      .exists({_id: documentId})
+      .exists({ _id: documentId })
       .then(Boolean);
   }
 

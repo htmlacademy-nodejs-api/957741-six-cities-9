@@ -17,7 +17,7 @@ export class MongoDatabaseClient implements DatabaseClient {
   ) { }
 
   public isConnected() {
-    return this.mongoose?.connection?.readyState === MONGO_SETUP.CONNECTIONT_READY_STATE;
+    return this.mongoose?.connection?.readyState === MONGO_SETUP.CONNECTION_READY_STATE;
   }
 
   public async connect(uri: string): Promise<void> {

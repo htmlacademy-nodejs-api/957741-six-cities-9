@@ -47,6 +47,42 @@ paths:
         "409":
           description: Пользователь с таким email уже существует.
 
+  /users/avatar:
+    put:
+      tags:
+        - Users
+      summary: Загрузить изображение аватара
+      description: >
+        Загружает изображение аватара пользователя. Изображение
+        аватара должно быть в формате `png` или `jpg`.
+      requestBody:
+        description: Изображение аватара пользователя
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: Изображение аватара пользователя (файл)
+
+      responses:
+        "200":
+          description: Изображение аватара успешно загружено.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  avatarUrl:
+                    $ref: "#/components/schemas/userAvatar"
+        "400":
+          description: Неверный формат файла. Допускаются только изображения в формате PNG или JPG.
+        "401":
+          description: Не авторизован. Пожалуйста, предоставьте валидный токен.
+
   /auth/login:
     post:
       tags:
@@ -242,7 +278,7 @@ paths:
         "404":
           description: "Предложение не найдено"
 
-  /offers/{offerId}/comments:
+  /comments/offers/{offerId}:
     get:
       tags:
         - Comments
@@ -299,7 +335,7 @@ paths:
         "400":
           description: "Ошибка валидации данных"
 
-  /favorites:
+  /users/favorites:
     get:
       tags:
         - Favorites
@@ -318,8 +354,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/offerListItem"
 
-  /favorites/{offerId}:
-    post:
+  /users/favorites/{offerId}:
+    put:
       tags:
         - Favorites
       summary: "Добавление предложения в избранное"
