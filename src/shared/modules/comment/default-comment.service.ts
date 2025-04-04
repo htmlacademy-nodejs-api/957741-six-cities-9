@@ -30,6 +30,6 @@ export class DefaultCommentService implements CommentService {
       .find({ offerId })
       .sort({ createdAt: SortType.Down })
       .limit(COMMENT_COUNT)
-      .populate('authorId');
+      .populate('authorId').exec();
   }
 }

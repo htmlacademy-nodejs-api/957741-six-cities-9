@@ -2,12 +2,12 @@ import { inject, injectable } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 import { NextFunction, Request, Response } from 'express';
 
-import { createErrorObject } from '../../../helpers/common.js';
+import { createErrorObject } from '../../../helpers/index.js';
 
 import { ExceptionFilter } from './exception-filter.interface.js';
 import { Logger } from '../../logger/index.js';
-import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
-import { HttpError } from '../errors/http-error.js';
+import { COMPONENT_MAP } from '../../../types/index.js';
+import { HttpError } from '../errors/index.js';
 
 @injectable()
 export class AppExceptionFilter implements ExceptionFilter {

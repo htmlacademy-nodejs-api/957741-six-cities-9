@@ -7,7 +7,7 @@ import { City, Nullable } from '../../types/index.js';
 export interface OfferService {
   create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
   findById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>>;
-  find(): Promise<DocumentType<OfferEntity>[]>;
+  find(limit?: number): Promise<DocumentType<OfferEntity>[]>;
   findPremium(city: City): Promise<DocumentType<OfferEntity>[]>;
   deleteById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>>;
   updateById(offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>>;

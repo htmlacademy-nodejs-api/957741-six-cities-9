@@ -8,7 +8,7 @@ import { fillDTO } from '../../../helpers/common.js';
 import { OfferRdo } from '../../../modules/offer/index.js';
 
 @injectable()
-export class CommentController extends BaseController {
+export class AuthController extends BaseController {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) protected readonly logger: Logger,
     @inject(COMPONENT_MAP.COMMENT_SERVICE) private readonly commentService: CommentService,

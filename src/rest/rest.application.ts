@@ -17,6 +17,7 @@ export class RestApplication {
     @inject(COMPONENT_MAP.CONFIG) private readonly config: Config<RestSchema>,
     @inject(COMPONENT_MAP.DATABESE_CLIENT) private readonly databaseClient: DatabaseClient,
     @inject(COMPONENT_MAP.USER_CONTROLLER) private readonly userController: Controller,
+    @inject(COMPONENT_MAP.AUTH_CONTROLLER) private readonly authController: Controller,
     @inject(COMPONENT_MAP.OFFER_CONTROLLER) private readonly offerController: Controller,
     @inject(COMPONENT_MAP.COMMENT_CONTROLLER) private readonly commentController: Controller,
     @inject(COMPONENT_MAP.EXCEPTION_FILTER) private readonly appExceptionFilter: ExceptionFilter,
@@ -54,6 +55,7 @@ export class RestApplication {
     this.server.use('/users', this.userController.router);
     this.server.use('/offers', this.offerController.router);
     this.server.use('/comments', this.commentController.router);
+    this.server.use('/auth', this.authController.router);
   }
 
   public async init() {
@@ -77,6 +79,9 @@ export class RestApplication {
 
     this.logger.info('Try to init server…');
     await this._initServer();
+    this.logger.info(
+      `🚀 Server started on http://${this.config.get('HOST')}:${this.config.get('PORT')}`
+    );
     this.logger.info(`Get value from env $PORT: ${this.config.get('PORT')}`);
     this.logger.info(`Get value from env $SALT: ${this.config.get('SALT')}`);
     this.logger.info(`Get value from env $DB_HOST: ${this.config.get('DB_HOST')}`);
