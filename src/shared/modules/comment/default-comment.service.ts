@@ -7,6 +7,7 @@ import { COMPONENT_MAP, SortType } from '../../types/index.js';
 import { CommentEntity, CommentService, CreateCommentDto } from './index.js';
 import { OfferService } from '../offer/index.js';
 import { COMMENT_COUNT } from './conts.js';
+import { DeleteResult } from 'mongoose';
 
 @injectable()
 export class DefaultCommentService implements CommentService {
@@ -31,5 +32,9 @@ export class DefaultCommentService implements CommentService {
       .sort({ createdAt: SortType.Down })
       .limit(COMMENT_COUNT)
       .populate('authorId').exec();
+  }
+
+  public async deleteByOfferId(offerId: string): Promise<DeleteResult> {
+    return this.commentModel.deleteMany({ offerId }).exec();
   }
 }

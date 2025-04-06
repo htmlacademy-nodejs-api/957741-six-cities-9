@@ -12,7 +12,7 @@ import { OFFER_COUNT } from './const.js';
 export class DefaultOfferService implements OfferService {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) private readonly logger: Logger,
-    @inject(COMPONENT_MAP.OFFER_MODEL) private readonly offerModel: types.ModelType<OfferEntity>
+    @inject(COMPONENT_MAP.OFFER_MODEL) private readonly offerModel: types.ModelType<OfferEntity>,
   ) { }
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {

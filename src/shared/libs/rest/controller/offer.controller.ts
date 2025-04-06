@@ -12,12 +12,13 @@ export class OfferController extends BaseController {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) protected readonly logger: Logger,
     @inject(COMPONENT_MAP.OFFER_SERVICE) private readonly offerService: OfferService,
+    @inject(COMPONENT_MAP.COMMENT_SERVICE) private readonly commentService: CommentService
   ) {
     super(logger);
 
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
     this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
-    this.addRoute({ path: '/:offerId', method: HttpMethod.Get, handler: this.read });
+    this.addRoute({ path: '/:offerId', method: HttpMethod.Get, handler: this.show });
     this.addRoute({ path: '/:offerId', method: HttpMethod.Patch, handler: this.update });
     this.addRoute({ path: '/:offerId', method: HttpMethod.Delete, handler: this.delete });
 
@@ -38,7 +39,7 @@ export class OfferController extends BaseController {
     this.created(res, responseData);
   }
 
-  public async read(req: Request, res: Response): Promise<void> {
+  public async show(req: Request, res: Response): Promise<void> {
     // 404	Предложение не найдено
     const offer = await this.offerService.findById(req.params.offerId);
     const responseData = fillDTO(OfferRdo, offer);
@@ -54,10 +55,11 @@ export class OfferController extends BaseController {
     this.ok(res, responseData);
   }
 
-  public async delete(req: Request, res: Response): Promise<void> {
+  public async delete({ params }: Request, res: Response): Promise<void> {
     // 403 Попытка редактирования чужого предложения
     // 404 Предложение не найдено
-    const offer = await this.offerService.deleteById(req.params.offerId);
+    this.commentService.deleteByOfferId(params.offerId);
+    const offer = await this.offerService.deleteById(params.offerId);
     const responseData = fillDTO(OfferRdo, offer);
     this.noContent(res, responseData);
   }
