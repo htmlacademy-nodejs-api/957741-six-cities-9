@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
-import { BaseController, HttpMethod } from '../index.js';
+import { BaseController, HttpMethod, ValidateObjectIdMiddleware } from '../index.js';
 import { Logger } from '../../logger/index.js';
 import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
 import { CommentRdo, CommentService } from '../../../modules/comment/index.js';
@@ -16,8 +16,8 @@ export class CommentController extends BaseController {
   ) {
     super(logger);
 
-    this.addRoute({ path: '/offers/:offerId', method: HttpMethod.Get, handler: this.index });
-    this.addRoute({ path: '/offers/:offerId', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({ path: '/offers/:offerId', method: HttpMethod.Get, handler: this.index, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
+    this.addRoute({ path: '/offers/:offerId', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
 
     this.logger.info('Register routes for CommentController');
   }

@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 
-import { BaseController, HttpMethod } from '../index.js';
+import { BaseController, HttpMethod, ValidateObjectIdMiddleware } from '../index.js';
 import { Logger } from '../../logger/index.js';
 import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
 import { OfferRdo, OfferService } from '../../../modules/offer/index.js';
 import { fillDTO } from '../../../helpers/common.js';
+import { CommentService } from '../../../modules/comment/index.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -18,9 +19,9 @@ export class OfferController extends BaseController {
 
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
     this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
-    this.addRoute({ path: '/:offerId', method: HttpMethod.Get, handler: this.show });
-    this.addRoute({ path: '/:offerId', method: HttpMethod.Patch, handler: this.update });
-    this.addRoute({ path: '/:offerId', method: HttpMethod.Delete, handler: this.delete });
+    this.addRoute({ path: '/:offerId', method: HttpMethod.Get, handler: this.show, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
+    this.addRoute({ path: '/:offerId', method: HttpMethod.Patch, handler: this.update, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
+    this.addRoute({ path: '/:offerId', method: HttpMethod.Delete, handler: this.delete, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
 
     this.logger.info('Register routes for OfferController');
   }

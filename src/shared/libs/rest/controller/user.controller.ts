@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
-import { BaseController, HttpMethod } from '../index.js';
+import { BaseController, HttpMethod, ValidateObjectIdMiddleware } from '../index.js';
 import { Logger } from '../../logger/index.js';
 import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
 import { UserRdo, UserService } from '../../../modules/user/index.js';
@@ -17,8 +17,8 @@ export class UserController extends BaseController {
     this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
     this.addRoute({ path: '/avatar', method: HttpMethod.Put, handler: this.updateAvatar });
     this.addRoute({ path: '/favorites', method: HttpMethod.Get, handler: this.getFavorites });
-    this.addRoute({ path: '/favorites/:offerId', method: HttpMethod.Put, handler: this.putFavorites });
-    this.addRoute({ path: '/favorites/:offerId', method: HttpMethod.Delete, handler: this.deleteFavorites });
+    this.addRoute({ path: '/favorites/:offerId', method: HttpMethod.Put, handler: this.putFavorites, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
+    this.addRoute({ path: '/favorites/:offerId', method: HttpMethod.Delete, handler: this.deleteFavorites, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
 
     this.logger.info('Register routes for UserController');
   }
