@@ -34,8 +34,7 @@ export class CommentController extends BaseController {
 
   public async index({ params }: Request, res: Response): Promise<void> {
     const comments = await this.commentService.findByOfferId(params.offerId);
-    const responseData = fillDTO(CommentRdo, comments);
-    this.ok(res, responseData);
+    this.ok(res, fillDTO(CommentRdo, comments));
   }
 
   public async create({ body, params }: Request, res: Response): Promise<void> {
@@ -43,8 +42,7 @@ export class CommentController extends BaseController {
     body.offerId = params.offerId;
     const comment = await this.commentService.create(body);
     await this.offerService.incCommentCountAndUpdateRating(body.offerId, body.rating);
-    const responseData = fillDTO(OfferRdo, comment);
-    this.created(res, responseData);
+    this.created(res, fillDTO(OfferRdo, comment));
   }
 
 }

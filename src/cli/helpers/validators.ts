@@ -23,8 +23,8 @@ export function validateUrl(value: string, fieldName: string): void {
 }
 
 export function validateImportCommandParams(params: string[]): void {
-  if (params.length !== 7) {
-    throw new Error('Import command requires seven parameters: filename, login, password, host, dbname, dbport and salt');
+  if (params.length !== 6) {
+    throw new Error('Import command requires seven parameters: filename, login, password, host, dbname, dbport');
   }
   validateNotEmpty(params[0], 'filename');
   validateNotEmpty(params[1], 'login');
@@ -32,7 +32,6 @@ export function validateImportCommandParams(params: string[]): void {
   validateNotEmpty(params[3], 'host');
   validateNotEmpty(params[4], 'dbname');
   validateNotEmpty(params[5], 'dbport');
-  validateNotEmpty(params[6], 'salt');
 }
 
 export function validateGenerateCommandParams(params: string[]): { count: number; filepath: string; url: string } {
