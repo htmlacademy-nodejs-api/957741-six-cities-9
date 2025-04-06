@@ -25,7 +25,7 @@ export class DefaultOfferService implements OfferService {
   public async findById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findById(offerId)
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
@@ -36,7 +36,7 @@ export class DefaultOfferService implements OfferService {
       .find()
       .sort({ createdAt: SortType.Down })
       .limit(limit)
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
@@ -45,7 +45,7 @@ export class DefaultOfferService implements OfferService {
       .find({ city, isPremium: true })
       .sort({ createdAt: SortType.Down })
       .limit(OFFER_COUNT.PREMIUM)
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
@@ -58,7 +58,7 @@ export class DefaultOfferService implements OfferService {
   public async updateById(offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, { new: true })
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
