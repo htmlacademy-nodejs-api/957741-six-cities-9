@@ -1,24 +1,36 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
-import { BaseController, HttpMethod, ValidateObjectIdMiddleware } from '../index.js';
+import { BaseController, DocumentExistsMiddleware, HttpMethod, ValidateObjectIdMiddleware } from '../index.js';
 import { Logger } from '../../logger/index.js';
 import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
 import { UserRdo, UserService } from '../../../modules/user/index.js';
 import { fillDTO } from '../../../helpers/index.js';
+import { OfferService } from '../../../modules/offer/index.js';
 
 @injectable()
 export class UserController extends BaseController {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) protected readonly logger: Logger,
     @inject(COMPONENT_MAP.USER_SERVICE) private readonly userService: UserService,
+    @inject(COMPONENT_MAP.OFFER_SERVICE) private readonly offerService: OfferService,
   ) {
     super(logger);
 
     this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
     this.addRoute({ path: '/avatar', method: HttpMethod.Put, handler: this.updateAvatar });
     this.addRoute({ path: '/favorites', method: HttpMethod.Get, handler: this.getFavorites });
-    this.addRoute({ path: '/favorites/:offerId', method: HttpMethod.Put, handler: this.putFavorites, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
-    this.addRoute({ path: '/favorites/:offerId', method: HttpMethod.Delete, handler: this.deleteFavorites, middlewares: [new ValidateObjectIdMiddleware('offerId')] });
+    this.addRoute({
+      path: '/favorites/:offerId', method: HttpMethod.Put, handler: this.putFavorites, middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ]
+    });
+    this.addRoute({
+      path: '/favorites/:offerId', method: HttpMethod.Delete, handler: this.deleteFavorites, middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ]
+    });
 
     this.logger.info('Register routes for UserController');
   }
