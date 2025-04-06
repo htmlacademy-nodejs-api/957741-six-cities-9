@@ -369,6 +369,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/offerListItem"
+        "403":
+          description: "Попытка редактирования чужого предложения"
 
   /users/favorites/{offerId}:
     put:
@@ -389,6 +391,8 @@ paths:
       responses:
         "200":
           description: "Предложение добавлено в избранное"
+        "403":
+          description: "Попытка редактирования чужого предложения"
         "404":
           description: "Предложение не найдено"
 
@@ -410,6 +414,8 @@ paths:
       responses:
         "200":
           description: "Предложение удалено из избранного"
+        "403":
+          description: "Попытка редактирования чужого предложения"
         "404":
           description: "Предложение не найдено"
 components:

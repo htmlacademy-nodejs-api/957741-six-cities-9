@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
-import { BaseController, DocumentExistsMiddleware, HttpMethod, UploadFileMiddleware, ValidateObjectIdMiddleware } from '../index.js';
+import { BaseController, DocumentExistsMiddleware, HttpMethod, UploadFileMiddleware, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../index.js';
 import { Logger } from '../../logger/index.js';
 import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
-import { UserRdo, UserService } from '../../../modules/user/index.js';
+import { CreateUserDto, UserRdo, UserService } from '../../../modules/user/index.js';
 import { fillDTO } from '../../../helpers/index.js';
-import { OfferService } from '../../../modules/offer/index.js';
+import { OfferRdo, OfferService } from '../../../modules/offer/index.js';
 import { Config } from 'convict';
 import { RestSchema } from '../../config/rest.schema.type.js';
 
@@ -19,7 +19,12 @@ export class UserController extends BaseController {
   ) {
     super(logger);
 
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({
+      path: '/', method: HttpMethod.Post, handler: this.create,
+      middlewares: [
+        new ValidateDtoMiddleware(CreateUserDto)
+      ]
+    });
     this.addRoute({
       path: '/avatar', method: HttpMethod.Put, handler: this.uploadAvatar,
       middlewares: [
@@ -44,34 +49,37 @@ export class UserController extends BaseController {
   }
 
   public async create(req: Request, res: Response): Promise<void> {
-    // 400 Ошибка валидации данных
     // 409	Пользователь с таким email уже существует.
     const user = await this.userService.create(req.body);
-    const responseData = fillDTO(UserRdo, user);
-    this.created(res, responseData);
+    this.created(res, fillDTO(UserRdo, user));
   }
 
   public async uploadAvatar(req: Request, res: Response) {
-    // 200	Изображение аватара успешно загружено.
     // 400	Неверный формат файла. Допускаются только изображения в формате PNG или JPG.
     // 401	Не авторизован. Пожалуйста, предоставьте валидный токен.
-
     this.created(res, {
       filepath: req.file?.path
     });
   }
 
   public async getFavorites(req: Request, res: Response): Promise<void> {
-    // 200 Список избранных предложений
+    // 403 Попытка редактирования чужого предложения
+    const userId = 'userIdFromToken';
+    const offers = this.userService.findFavorites(userId);
+    this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async putFavorites(req: Request, res: Response): Promise<void> {
-    // 200 Предложение добавлено в избранное
-    // 404 Предложение не найдено
+  public async putFavorites({ params }: Request, res: Response): Promise<void> {
+    // 403 Попытка редактирования чужого предложения
+    const userId = 'userIdFromToken';
+    const offer = this.userService.addToFavorites(userId, params.offerId);
+    this.ok(res, fillDTO(OfferRdo, offer));
   }
 
-  public async deleteFavorites(req: Request, res: Response): Promise<void> {
-    // 200	Предложение удалено из избранного
-    // 404	Предложение не найдено
+  public async deleteFavorites({ params }: Request, res: Response): Promise<void> {
+    // 403 Попытка редактирования чужого предложения
+    const userId = 'userIdFromToken';
+    const offer = this.userService.removeFromFavorites(userId, params.offerId);
+    this.ok(res, fillDTO(OfferRdo, offer));
   }
 }
