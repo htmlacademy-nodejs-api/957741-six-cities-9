@@ -3,7 +3,7 @@ import { DocumentType, types } from '@typegoose/typegoose';
 
 import { Logger } from '../../libs/logger/index.js';
 import { OfferService, CreateOfferDto, OfferEntity, UpdateOfferDto } from './index.js';
-import { City, COMPONENT_MAP } from '../../types/index.js';
+import { CityName, COMPONENT_MAP } from '../../types/index.js';
 
 import { Nullable, SortType } from '../../types/index.js';
 import { OFFER_COUNT } from './const.js';
@@ -40,9 +40,9 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async findPremium(city: City): Promise<DocumentType<OfferEntity>[]> {
+  public async findPremiumByCity(cityName: CityName): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel
-      .find({ city, isPremium: true })
+      .find({ city: { name: cityName }, isPremium: true })
       .sort({ createdAt: SortType.Down })
       .limit(OFFER_COUNT.PREMIUM)
       .populate('authorId')
