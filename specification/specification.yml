@@ -146,17 +146,6 @@ paths:
           schema:
             type: integer
             default: 60
-        - name: offset
-          in: query
-          description: "Смещение для пагинации"
-          schema:
-            type: integer
-            default: 0
-        - name: premium
-          in: query
-          schema:
-            type: boolean
-            description: "Флаг премиальности для получения до 3 премиум предложений"
       responses:
         "200":
           description: "Список предложений"
@@ -278,6 +267,33 @@ paths:
         "404":
           description: "Предложение не найдено"
 
+  /offers/premium/{cityName}:
+    get:
+      tags:
+        - Offers
+      summary: "Получение списка премиальный предложений по аренде  определенном городе"
+      description: >
+        Ресурс для получения списка премиальных предложений для определённого города. Премиальное предложение — предложение с флагом «Premium»
+        Сервис возвращает не больше 3 предложений с флагом «Premium».
+        Список возвращаемых предложений отсортирован по дате публикации (по убыванию).
+        Ресурс доступен авторизованным и анонимным клиентам.
+      parameters:
+        - name: cityName
+          in: path
+          description: "Название города"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Список премиальных предложений предложений"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/offerListItem"
+
   /comments/offers/{offerId}:
     get:
       tags:
@@ -353,6 +369,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/offerListItem"
+        "403":
+          description: "Попытка редактирования чужого предложения"
 
   /users/favorites/{offerId}:
     put:
@@ -373,6 +391,8 @@ paths:
       responses:
         "200":
           description: "Предложение добавлено в избранное"
+        "403":
+          description: "Попытка редактирования чужого предложения"
         "404":
           description: "Предложение не найдено"
 
@@ -394,6 +414,8 @@ paths:
       responses:
         "200":
           description: "Предложение удалено из избранного"
+        "403":
+          description: "Попытка редактирования чужого предложения"
         "404":
           description: "Предложение не найдено"
 components:

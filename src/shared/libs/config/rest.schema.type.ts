@@ -7,4 +7,5 @@ export type RestSchema = {
   DB_NAME: string;
   DB_USER: string;
   DB_PASSWORD: string;
+  UPLOAD_DIRECTORY: string;
 }

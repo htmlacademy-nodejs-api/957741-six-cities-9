@@ -3,7 +3,7 @@ import { DocumentType, types } from '@typegoose/typegoose';
 
 import { Logger } from '../../libs/logger/index.js';
 import { OfferService, CreateOfferDto, OfferEntity, UpdateOfferDto } from './index.js';
-import { City, COMPONENT_MAP } from '../../types/index.js';
+import { CityName, COMPONENT_MAP } from '../../types/index.js';
 
 import { Nullable, SortType } from '../../types/index.js';
 import { OFFER_COUNT } from './const.js';
@@ -12,7 +12,7 @@ import { OFFER_COUNT } from './const.js';
 export class DefaultOfferService implements OfferService {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) private readonly logger: Logger,
-    @inject(COMPONENT_MAP.OFFER_MODEL) private readonly offerModel: types.ModelType<OfferEntity>
+    @inject(COMPONENT_MAP.OFFER_MODEL) private readonly offerModel: types.ModelType<OfferEntity>,
   ) { }
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
@@ -25,7 +25,7 @@ export class DefaultOfferService implements OfferService {
   public async findById(offerId: string): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findById(offerId)
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
@@ -36,16 +36,16 @@ export class DefaultOfferService implements OfferService {
       .find()
       .sort({ createdAt: SortType.Down })
       .limit(limit)
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
-  public async findPremium(city: City): Promise<DocumentType<OfferEntity>[]> {
+  public async findPremiumByCity(cityName: CityName): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel
-      .find({ city, isPremium: true })
+      .find({ city: { name: cityName }, isPremium: true })
       .sort({ createdAt: SortType.Down })
       .limit(OFFER_COUNT.PREMIUM)
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
@@ -58,7 +58,7 @@ export class DefaultOfferService implements OfferService {
   public async updateById(offerId: string, dto: UpdateOfferDto): Promise<Nullable<DocumentType<OfferEntity>>> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, { new: true })
-      .populate(['authorId'])
+      .populate('authorId')
       .exec();
   }
 
