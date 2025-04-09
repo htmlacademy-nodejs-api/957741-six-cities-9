@@ -1,16 +1,19 @@
-import { IsString, MinLength, MaxLength, IsUrl, IsIn } from 'class-validator';
+import { IsString, IsUrl, IsOptional, IsEnum, Length } from 'class-validator';
 import { UserType } from '../../../types/index.js';
+import { USER_VALIDATION } from './const.js';
 
 export class UpdateUserDto {
+  @IsOptional()
   @IsString()
-  @MinLength(1)
-  @MaxLength(15)
+  @Length(USER_VALIDATION.NAME.MAX_LENGTH, USER_VALIDATION.NAME.MAX_LENGTH)
   public name?: string;
 
+  @IsOptional()
   @IsString()
   @IsUrl()
   public avatarUrl?: string;
 
-  @IsIn(['standard', 'pro'])
+  @IsOptional()
+  @IsEnum(UserType)
   public type?: UserType;
 }

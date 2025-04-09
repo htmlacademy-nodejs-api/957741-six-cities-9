@@ -1,10 +1,10 @@
-import { IsMongoId, IsString, MinLength, MaxLength, IsInt, IsNotEmpty } from 'class-validator';
+import { IsMongoId, IsString, Length, IsInt, IsNotEmpty } from 'class-validator';
+import { COMMENT_VALIDATION } from './const.js';
 
 export class CreateCommentDto {
   @IsNotEmpty()
   @IsString()
-  @MinLength(5)
-  @MaxLength(1024)
+  @Length(COMMENT_VALIDATION.TEXT.MIN_LENGTH, COMMENT_VALIDATION.TEXT.MAX_LENGTH)
   public text: string;
 
   @IsNotEmpty()

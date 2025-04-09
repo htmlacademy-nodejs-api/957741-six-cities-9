@@ -33,17 +33,16 @@ export class CommentController extends BaseController {
     this.logger.info('Register routes for CommentController');
   }
 
-  public async index({ params }: Request, res: Response): Promise<void> {
-    const comments = await this.commentService.findByOfferId(params.offerId);
+  public async index({ params: { offerId } }: Request, res: Response): Promise<void> {
+    const comments = await this.commentService.findByOfferId(offerId);
     this.ok(res, fillDTO(CommentRdo, comments));
   }
 
-  public async create({ body, params }: Request, res: Response): Promise<void> {
+  public async create({ body, params: { offerId } }: Request, res: Response): Promise<void> {
     // 400 Ошибка валидации данных
-    body.offerId = params.offerId;
+    body.offerId = offerId;
     const comment = await this.commentService.create(body);
     await this.offerService.incCommentCountAndUpdateRating(body.offerId, body.rating);
     this.created(res, fillDTO(OfferRdo, comment));
   }
-
 }
