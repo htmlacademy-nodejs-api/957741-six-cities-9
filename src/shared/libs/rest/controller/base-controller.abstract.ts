@@ -10,32 +10,28 @@ import { Route } from '../types/route.interface.js';
 @injectable()
 export abstract class BaseController implements Controller {
   private readonly DEFAULT_CONTENT_TYPE = 'application/json';
-  private readonly _router: Router;
+  public readonly router: Router;
 
   constructor(
     protected readonly logger: Logger
   ) {
-    this._router = Router();
+    this.router = Router();
   }
 
-  get router() {
-    return this._router;
-  }
-
-  public addRoute(route: Route) {
+  public addRoute(route: Route): void {
     const wrapperAsyncHandler = asyncHandler(route.handler.bind(this));
     const middlewareHandlers = route.middlewares?.map(
       (item) => asyncHandler(item.execute.bind(item))
     );
     const allHandlers = middlewareHandlers ? [...middlewareHandlers, wrapperAsyncHandler] : wrapperAsyncHandler;
-    this._router[route.method](route.path, allHandlers);
+    this.router[route.method](route.path, allHandlers);
     this.logger.info(`Route registered: ${route.method.toUpperCase()} ${route.path}`);
   }
 
   public send<T>(res: Response, statusCode: number, data: T): void {
     res
-      .type(this.DEFAULT_CONTENT_TYPE)
       .status(statusCode)
+      .type(this.DEFAULT_CONTENT_TYPE)
       .json(data);
   }
 

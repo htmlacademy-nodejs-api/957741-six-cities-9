@@ -1,27 +1,27 @@
-import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength, IsIn, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, IsUrl, IsEnum, Length, IsOptional } from 'class-validator';
 import { UserType } from '../../../types/user.type.js';
+import { USER_VALIDATION } from './const.js';
 
 export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   public email: string;
 
+  @IsOptional()
   @IsString()
   @IsUrl()
   public avatarUrl?: string;
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(1)
-  @MaxLength(15)
+  @Length(USER_VALIDATION.NAME.MIN_LENGTH, USER_VALIDATION.NAME.MAX_LENGTH)
   public name: string;
 
-  @IsIn(['standard', 'pro'])
+  @IsEnum(UserType)
   public userType: UserType;
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(6)
-  @MaxLength(15)
+  @Length(USER_VALIDATION.PASSWORD.MIN_LENGTH, USER_VALIDATION.PASSWORD.MAX_LENGTH)
   public password: string;
 }

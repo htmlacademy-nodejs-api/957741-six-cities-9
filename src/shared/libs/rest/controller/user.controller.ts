@@ -69,17 +69,17 @@ export class UserController extends BaseController {
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async putFavorites({ params }: Request, res: Response): Promise<void> {
+  public async putFavorites({ params: { offerId } }: Request, res: Response): Promise<void> {
     // 403 Попытка редактирования чужого предложения
     const userId = 'userIdFromToken';
-    const offer = this.userService.addToFavorites(userId, params.offerId);
+    const offer = this.userService.addToFavorites(userId, offerId);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
-  public async deleteFavorites({ params }: Request, res: Response): Promise<void> {
+  public async deleteFavorites({ params: { offerId } }: Request, res: Response): Promise<void> {
     // 403 Попытка редактирования чужого предложения
     const userId = 'userIdFromToken';
-    const offer = this.userService.removeFromFavorites(userId, params.offerId);
+    const offer = this.userService.removeFromFavorites(userId, offerId);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 }

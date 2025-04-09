@@ -1,20 +1,19 @@
 import { Type } from 'class-transformer';
-import { IsNumber, IsNotEmpty, Min, Max, IsString, MinLength, MaxLength, IsEnum, ValidateNested, IsUrl, IsArray, ArrayMaxSize, ArrayMinSize, IsBoolean, IsMongoId } from 'class-validator';
+import { IsNumber, IsNotEmpty, Min, Max, IsString, Length, IsEnum, ValidateNested, IsUrl, IsArray, ArrayMaxSize, ArrayMinSize, IsBoolean } from 'class-validator';
 import { City, Amenity, Location, HousingType, OfferImages } from '../../../types/index.js';
 import { CityDto } from './city.dto.js';
 import { LocationDto } from './location.dto.js';
+import { OFFER_VALIDATION } from './const.js';
 
 export class CreateOfferDto {
   @IsNotEmpty()
   @IsString()
-  @MinLength(10)
-  @MaxLength(100)
+  @Length(OFFER_VALIDATION.TITLE.MIN_LENGTH, OFFER_VALIDATION.TITLE.MAX_LENGTH)
   public title: string;
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(20)
-  @MaxLength(1024)
+  @Length(OFFER_VALIDATION.DESCRIPTION.MIN_LENGTH, OFFER_VALIDATION.DESCRIPTION.MAX_LENGTH)
   public description: string;
 
   @IsNotEmpty()
@@ -29,8 +28,8 @@ export class CreateOfferDto {
 
   @IsNotEmpty()
   @IsArray()
-  @ArrayMinSize(6)
-  @ArrayMaxSize(6)
+  @ArrayMinSize(OFFER_VALIDATION.IMAGES.MIN_COUNT)
+  @ArrayMaxSize(OFFER_VALIDATION.IMAGES.MAX_COUNT)
   @IsUrl({}, { each: true })
   public images: OfferImages;
 
@@ -44,31 +43,27 @@ export class CreateOfferDto {
 
   @IsNotEmpty()
   @IsNumber()
-  @Min(1)
-  @Max(8)
+  @Min(OFFER_VALIDATION.ROOMS.MIN)
+  @Max(OFFER_VALIDATION.ROOMS.MAX)
   public rooms: number;
 
   @IsNotEmpty()
   @IsNumber()
-  @Min(1)
-  @Max(10)
+  @Min(OFFER_VALIDATION.GUESTS.MIN)
+  @Max(OFFER_VALIDATION.GUESTS.MAX)
   public guests: number;
 
   @IsNotEmpty()
   @IsNumber()
-  @Min(100)
-  @Max(100000)
+  @Min(OFFER_VALIDATION.PRICE.MIN)
+  @Max(OFFER_VALIDATION.PRICE.MAX)
   public price: number;
 
   @IsNotEmpty()
   @IsArray()
-  @ArrayMinSize(1)
+  @ArrayMinSize(OFFER_VALIDATION.AMENITIES.MIN_COUNT)
   @IsEnum(Amenity, { each: true })
   public amenities: Amenity[];
-
-  @IsNotEmpty()
-  @IsMongoId()
-  public authorId: string;
 
   @IsNotEmpty()
   @ValidateNested()

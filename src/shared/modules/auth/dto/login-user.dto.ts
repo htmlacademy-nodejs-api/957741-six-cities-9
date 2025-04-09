@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, Length } from 'class-validator';
+import { AUTH_VALIDATION } from './const.js';
 
 export class LoginUserDto {
   @IsNotEmpty()
@@ -7,7 +8,6 @@ export class LoginUserDto {
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(6)
-  @MaxLength(15)
+  @Length(AUTH_VALIDATION.PASSWORD.MIN_LENGTH, AUTH_VALIDATION.PASSWORD.MAX_LENGTH)
   public password: string;
 }

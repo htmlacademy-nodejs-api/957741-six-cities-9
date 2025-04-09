@@ -60,32 +60,32 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, offer));
   }
 
-  public async show({ params }: Request, res: Response): Promise<void> {
-    const offer = await this.offerService.findById(params.offerId);
+  public async show({ params: { offerId } }: Request, res: Response): Promise<void> {
+    const offer = await this.offerService.findById(offerId);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
-  public async update({ body, params }: Request, res: Response): Promise<void> {
+  public async update({ body, params: { offerId } }: Request, res: Response): Promise<void> {
     // 403 Попытка редактирования чужого предложения
-    const offer = await this.offerService.updateById(params.offerId, body);
+    const offer = await this.offerService.updateById(offerId, body);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
-  public async delete({ params }: Request, res: Response): Promise<void> {
+  public async delete({ params: { offerId } }: Request, res: Response): Promise<void> {
     // 403 Попытка редактирования чужого предложения
-    this.commentService.deleteByOfferId(params.offerId);
-    const offer = await this.offerService.deleteById(params.offerId);
+    this.commentService.deleteByOfferId(offerId);
+    const offer = await this.offerService.deleteById(offerId);
     this.noContent(res, fillDTO(OfferRdo, offer));
   }
 
   public async findPremiumByCity({ params }: Request, res: Response): Promise<void> {
-    const city = params.city as CityName;
-    const cityName = city.toUpperCase() as keyof typeof CityName;
+    const cityParam = params.city as string;
+    const city = cityParam.charAt(0).toUpperCase() + cityParam.slice(1).toLowerCase() as CityName;
 
-    if (!city || CityName[cityName]) {
+    if (!cityParam || !Object.values(CityName).includes(city)) {
       throw new HttpError(
         StatusCodes.BAD_REQUEST,
-        `Invalid city name: ${city}`,
+        `Invalid city name: ${cityParam}`,
         'OfferController'
       );
     }
