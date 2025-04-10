@@ -15,4 +15,5 @@ export const COMPONENT_MAP = {
   AUTH_SERVICE: Symbol(),
   AUTH_CONTROLLER: Symbol(),
   EXCEPTION_FILTER: Symbol(),
+  AUTH_EXCEPTION_FILTER: Symbol(),
 } as const;

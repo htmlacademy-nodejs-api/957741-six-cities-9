@@ -66,13 +66,11 @@ export class OfferController extends BaseController {
   }
 
   public async update({ body, params: { offerId } }: Request, res: Response): Promise<void> {
-    // 403 Попытка редактирования чужого предложения
     const offer = await this.offerService.updateById(offerId, body);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
   public async delete({ params: { offerId } }: Request, res: Response): Promise<void> {
-    // 403 Попытка редактирования чужого предложения
     this.commentService.deleteByOfferId(offerId);
     const offer = await this.offerService.deleteById(offerId);
     this.noContent(res, fillDTO(OfferRdo, offer));
