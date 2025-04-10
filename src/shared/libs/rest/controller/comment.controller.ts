@@ -6,6 +6,7 @@ import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
 import { CommentRdo, CommentService, CreateCommentDto } from '../../../modules/comment/index.js';
 import { fillDTO } from '../../../helpers/common.js';
 import { OfferRdo, OfferService } from '../../../modules/offer/index.js';
+import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.js';
 
 @injectable()
 export class CommentController extends BaseController {
@@ -17,13 +18,16 @@ export class CommentController extends BaseController {
     super(logger);
 
     this.addRoute({
-      path: '/offers/:offerId', method: HttpMethod.Get, handler: this.index, middlewares: [
+      path: '/offers/:offerId', method: HttpMethod.Get, handler: this.index,
+      middlewares: [
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ]
     });
     this.addRoute({
-      path: '/offers/:offerId', method: HttpMethod.Post, handler: this.create, middlewares: [
+      path: '/offers/:offerId', method: HttpMethod.Post, handler: this.create,
+      middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
         new ValidateDtoMiddleware(CreateCommentDto)
@@ -38,9 +42,10 @@ export class CommentController extends BaseController {
     this.ok(res, fillDTO(CommentRdo, comments));
   }
 
-  public async create({ body, params: { offerId } }: Request, res: Response): Promise<void> {
+  public async create({ body, params: { offerId }, tokenPayload }: Request, res: Response): Promise<void> {
     // 400 Ошибка валидации данных
     body.offerId = offerId;
+    body.authorId = tokenPayload.id;
     const comment = await this.commentService.create(body);
     await this.offerService.incCommentCountAndUpdateRating(body.offerId, body.rating);
     this.created(res, fillDTO(OfferRdo, comment));

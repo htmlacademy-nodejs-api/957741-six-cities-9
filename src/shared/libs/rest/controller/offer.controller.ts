@@ -9,6 +9,8 @@ import { fillDTO } from '../../../helpers/common.js';
 import { CommentService } from '../../../modules/comment/index.js';
 import { CityName } from '../../../types/offer.type.js';
 import { StatusCodes } from 'http-status-codes';
+import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.js';
+import { AccessDeniedError } from '../../../modules/auth/errors/index.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -22,6 +24,7 @@ export class OfferController extends BaseController {
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
     this.addRoute({
       path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateDtoMiddleware(CreateOfferDto)
       ]
     });
@@ -33,6 +36,7 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/:offerId', method: HttpMethod.Patch, handler: this.update, middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
         new ValidateDtoMiddleware(UpdateOfferDto)
@@ -40,6 +44,7 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/:offerId', method: HttpMethod.Delete, handler: this.delete, middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ]
@@ -55,7 +60,8 @@ export class OfferController extends BaseController {
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async create({ body }: Request, res: Response): Promise<void> {
+  public async create({ body, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
+    body.authorId = authorId;
     const offer = await this.offerService.create(body);
     this.created(res, fillDTO(OfferRdo, offer));
   }
@@ -65,15 +71,23 @@ export class OfferController extends BaseController {
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
-  public async update({ body, params: { offerId } }: Request, res: Response): Promise<void> {
-    const offer = await this.offerService.updateById(offerId, body);
-    this.ok(res, fillDTO(OfferRdo, offer));
+  public async update({ body, params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
+    const offer = await this.offerService.findById(offerId);
+    if (offer?.authorId._id.toString() !== authorId) {
+      throw new AccessDeniedError();
+    }
+    const updatedOffer = await this.offerService.updateById(offerId, body);
+    this.ok(res, fillDTO(OfferRdo, updatedOffer));
   }
 
-  public async delete({ params: { offerId } }: Request, res: Response): Promise<void> {
+  public async delete({ params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
+    const offer = await this.offerService.findById(offerId);
+    if (offer?.authorId._id.toString() !== authorId) {
+      throw new AccessDeniedError();
+    }
     this.commentService.deleteByOfferId(offerId);
-    const offer = await this.offerService.deleteById(offerId);
-    this.noContent(res, fillDTO(OfferRdo, offer));
+    const deletedOffer = await this.offerService.deleteById(offerId);
+    this.noContent(res, fillDTO(OfferRdo, deletedOffer));
   }
 
   public async findPremiumByCity({ params }: Request, res: Response): Promise<void> {

@@ -29,7 +29,8 @@
     ],
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/shared/libs/rest/errors"
   ],
   "exclude": [
     "node_modules",

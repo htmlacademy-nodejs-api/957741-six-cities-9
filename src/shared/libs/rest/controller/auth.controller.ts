@@ -16,7 +16,12 @@ export class AuthController extends BaseController {
     super(logger);
 
     this.addRoute({ path: '/login', method: HttpMethod.Get, handler: this.login });
-    this.addRoute({ path: '/status', method: HttpMethod.Post, handler: this.status });
+    this.addRoute({
+      path: '/status', method: HttpMethod.Post, handler: this.status,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+      ]
+    });
 
     this.logger.info('Register routes for AuthController');
   }
