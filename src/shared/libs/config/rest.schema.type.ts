@@ -8,4 +8,7 @@ export type RestSchema = {
   DB_USER: string;
   DB_PASSWORD: string;
   UPLOAD_DIRECTORY: string;
+  JWT_SECRET: string;
+  JWT_ALGORITHM: string;
+  JWT_EXPIRED: string;
 }

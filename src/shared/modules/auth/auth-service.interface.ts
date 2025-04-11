@@ -5,6 +5,7 @@ import { UserEntity } from '../user/user.entity.js';
 import { LoginUserDto } from './index.js';
 
 export interface AuthService {
-  login(dto: LoginUserDto): Promise<void>;
-  status(): Promise<Nullable<DocumentType<UserEntity>>>;
+  authenticate(user: UserEntity): Promise<string>;
+  login(dto: LoginUserDto): Promise<DocumentType<UserEntity>>;
+  status(id: string): Promise<Nullable<DocumentType<UserEntity>>>;
 }

@@ -39,6 +39,11 @@ export class UserEntity implements User {
     this.userType = userData.userType;
     this.password = createSHA256(userData.password, salt);
   }
+
+  public verifyPassword(password: string, salt: string) {
+    const hashPassword = createSHA256(password, salt);
+    return hashPassword === this.password;
+  }
 }
 
 export const UserModel = getModelForClass(UserEntity);

@@ -734,12 +734,20 @@ components:
     commentInput:
       type: object
       description: "Данные для добавления нового комментария"
-      allOf:
-        - $ref: "#/components/schemas/comment"
+      properties:
+        text:
+          type: string
+          minLength: 5
+          maxLength: 1024
+          description: "Текст комментария"
+        rating:
+          type: number
+          minimum: 1
+          maximum: 5
+          description: "Рейтинг комментария"
       required:
         - text
         - rating
-        - authorId
 
     commentDetailed:
       type: object

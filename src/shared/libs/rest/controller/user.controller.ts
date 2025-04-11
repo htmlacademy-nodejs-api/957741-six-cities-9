@@ -8,6 +8,8 @@ import { fillDTO } from '../../../helpers/index.js';
 import { OfferRdo, OfferService } from '../../../modules/offer/index.js';
 import { Config } from 'convict';
 import { RestSchema } from '../../config/rest.schema.type.js';
+import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.js';
+import { UserAlreadyExistsException } from '../../../modules/user/errors/user-already-exists.exception.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -28,18 +30,26 @@ export class UserController extends BaseController {
     this.addRoute({
       path: '/avatar', method: HttpMethod.Put, handler: this.uploadAvatar,
       middlewares: [
-        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar'),
+        new PrivateRouteMiddleware(),
+        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ['png', 'jpg']),
       ]
     });
-    this.addRoute({ path: '/favorites', method: HttpMethod.Get, handler: this.getFavorites });
+    this.addRoute({
+      path: '/favorites', method: HttpMethod.Get, handler: this.getFavorites,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+      ]
+    });
     this.addRoute({
       path: '/favorites/:offerId', method: HttpMethod.Put, handler: this.putFavorites, middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ]
     });
     this.addRoute({
       path: '/favorites/:offerId', method: HttpMethod.Delete, handler: this.deleteFavorites, middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ]
@@ -48,38 +58,34 @@ export class UserController extends BaseController {
     this.logger.info('Register routes for UserController');
   }
 
-  public async create(req: Request, res: Response): Promise<void> {
-    // 409	Пользователь с таким email уже существует.
-    const user = await this.userService.create(req.body);
+  public async create({ body }: Request, res: Response): Promise<void> {
+    const existingUser = await this.userService.findByEmail(body.email);
+
+    if (existingUser) {
+      throw new UserAlreadyExistsException(body.email);
+    }
+
+    const user = await this.userService.create(body);
     this.created(res, fillDTO(UserRdo, user));
   }
 
-  public async uploadAvatar(req: Request, res: Response) {
-    // 400	Неверный формат файла. Допускаются только изображения в формате PNG или JPG.
-    // 401	Не авторизован. Пожалуйста, предоставьте валидный токен.
-    this.created(res, {
-      filepath: req.file?.path
-    });
+  public async uploadAvatar({ file, tokenPayload: { id: authorId } }: Request, res: Response) {
+    const user = await this.userService.updateById(authorId, { avatarUrl: file?.path });
+    this.ok(res, fillDTO(OfferRdo, user));
   }
 
-  public async getFavorites(req: Request, res: Response): Promise<void> {
-    // 403 Попытка редактирования чужого предложения
-    const userId = 'userIdFromToken';
-    const offers = this.userService.findFavorites(userId);
+  public async getFavorites({ tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
+    const offers = this.userService.findFavorites(authorId);
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async putFavorites({ params: { offerId } }: Request, res: Response): Promise<void> {
-    // 403 Попытка редактирования чужого предложения
-    const userId = 'userIdFromToken';
-    const offer = this.userService.addToFavorites(userId, offerId);
+  public async putFavorites({ params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
+    const offer = this.userService.addToFavorites(authorId, offerId);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
-  public async deleteFavorites({ params: { offerId } }: Request, res: Response): Promise<void> {
-    // 403 Попытка редактирования чужого предложения
-    const userId = 'userIdFromToken';
-    const offer = this.userService.removeFromFavorites(userId, offerId);
+  public async deleteFavorites({ params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
+    const offer = this.userService.removeFromFavorites(authorId, offerId);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 }
