@@ -54,11 +54,7 @@ export class DefaultAuthService implements AuthService {
     return user;
   }
 
-
-  public async status(): Promise<Nullable<DocumentType<UserEntity>>> {
-    // 200 Пользователь авторизован
-    // 401 Пользователь не авторизован
-    const user = this.userService.findByEmail('email');
-    return user;
+  public async status(id: string): Promise<Nullable<DocumentType<UserEntity>>> {
+    return this.userService.findById(id);
   }
 }

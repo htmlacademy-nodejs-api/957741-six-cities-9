@@ -7,5 +7,5 @@ import { LoginUserDto } from './index.js';
 export interface AuthService {
   authenticate(user: UserEntity): Promise<string>;
   login(dto: LoginUserDto): Promise<DocumentType<UserEntity>>;
-  status(): Promise<Nullable<DocumentType<UserEntity>>>;
+  status(id: string): Promise<Nullable<DocumentType<UserEntity>>>;
 }

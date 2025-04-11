@@ -9,6 +9,7 @@ import { OfferRdo, OfferService } from '../../../modules/offer/index.js';
 import { Config } from 'convict';
 import { RestSchema } from '../../config/rest.schema.type.js';
 import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.js';
+import { UserAlreadyExistsException } from '../../../modules/user/errors/user-already-exists.exception.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -30,7 +31,7 @@ export class UserController extends BaseController {
       path: '/avatar', method: HttpMethod.Put, handler: this.uploadAvatar,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar'),
+        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ['png', 'jpg']),
       ]
     });
     this.addRoute({
@@ -57,18 +58,20 @@ export class UserController extends BaseController {
     this.logger.info('Register routes for UserController');
   }
 
-  public async create(req: Request, res: Response): Promise<void> {
-    // 409	Пользователь с таким email уже существует.
-    const user = await this.userService.create(req.body);
+  public async create({ body }: Request, res: Response): Promise<void> {
+    const existingUser = await this.userService.findByEmail(body.email);
+
+    if (existingUser) {
+      throw new UserAlreadyExistsException(body.email);
+    }
+
+    const user = await this.userService.create(body);
     this.created(res, fillDTO(UserRdo, user));
   }
 
-  public async uploadAvatar(req: Request, res: Response) {
-    // 400	Неверный формат файла. Допускаются только изображения в формате PNG или JPG.
-    // 401	Не авторизован. Пожалуйста, предоставьте валидный токен.
-    this.created(res, {
-      filepath: req.file?.path
-    });
+  public async uploadAvatar({ file, tokenPayload: { id: authorId } }: Request, res: Response) {
+    const user = await this.userService.updateById(authorId, { avatarUrl: file?.path });
+    this.ok(res, fillDTO(OfferRdo, user));
   }
 
   public async getFavorites({ tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {

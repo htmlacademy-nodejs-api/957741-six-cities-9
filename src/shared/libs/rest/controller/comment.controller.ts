@@ -43,7 +43,6 @@ export class CommentController extends BaseController {
   }
 
   public async create({ body, params: { offerId }, tokenPayload }: Request, res: Response): Promise<void> {
-    // 400 Ошибка валидации данных
     body.offerId = offerId;
     body.authorId = tokenPayload.id;
     const comment = await this.commentService.create(body);
