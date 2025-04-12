@@ -15,8 +15,6 @@ export function createRestApplicationContainer() {
     bind<Config<RestSchema>>(COMPONENT_MAP.CONFIG).to(RestConfig).inSingletonScope();
     bind<DatabaseClient>(COMPONENT_MAP.DATABESE_CLIENT).to(MongoDatabaseClient).inSingletonScope();
     bind<ExceptionFilter>(COMPONENT_MAP.EXCEPTION_FILTER).to(AppExceptionFilter).inSingletonScope();
-    bind<ExceptionFilter>(COMPONENT_MAP.H).to(AppExceptionFilter).inSingletonScope();
-    bind<ExceptionFilter>(COMPONENT_MAP.EXCEPTION_FILTER).to(AppExceptionFilter).inSingletonScope();
     bind<ExceptionFilter>(COMPONENT_MAP.HTTP_EXCEPTION_FILTER).to(HttpErrorExceptionFilter).inSingletonScope();
     bind<ExceptionFilter>(COMPONENT_MAP.VALIDATION_EXCEPTION_FILTER).to(ValidationExceptionFilter).inSingletonScope();
   });
