@@ -23,6 +23,8 @@ export class RestApplication {
     @inject(COMPONENT_MAP.COMMENT_CONTROLLER) private readonly commentController: Controller,
     @inject(COMPONENT_MAP.EXCEPTION_FILTER) private readonly appExceptionFilter: ExceptionFilter,
     @inject(COMPONENT_MAP.AUTH_EXCEPTION_FILTER) private readonly authExceptionFilter: ExceptionFilter,
+    @inject(COMPONENT_MAP.HTTP_EXCEPTION_FILTER) private readonly httpExceptionFilter: ExceptionFilter,
+    @inject(COMPONENT_MAP.VALIDATION_EXCEPTION_FILTER) private readonly validationExceptionFilter: ExceptionFilter,
   ) {
     this.logger.info('RestApplication created…');
     this.server = express();
@@ -57,6 +59,8 @@ export class RestApplication {
 
   private async initExceptionFilters() {
     this.server.use(this.authExceptionFilter.catch.bind(this.authExceptionFilter));
+    this.server.use(this.validationExceptionFilter.catch.bind(this.validationExceptionFilter));
+    this.server.use(this.httpExceptionFilter.catch.bind(this.httpExceptionFilter));
     this.server.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
   }
 
