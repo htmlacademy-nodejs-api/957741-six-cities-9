@@ -31,11 +31,7 @@ export class AuthController extends BaseController {
   public async login({ body }: Request, res: Response): Promise<void> {
     const user = await this.authService.login(body);
     const token = await this.authService.authenticate(user);
-    const responseData = fillDTO(AuthRdo, {
-      email: user.email,
-      token,
-    });
-    this.ok(res, responseData);
+    this.ok(res, fillDTO(AuthRdo, Object.assign(user, { token })));
   }
 
   public async status({ tokenPayload: { id } }: Request, res: Response): Promise<void> {

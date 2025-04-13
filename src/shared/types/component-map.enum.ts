@@ -16,4 +16,7 @@ export const COMPONENT_MAP = {
   AUTH_CONTROLLER: Symbol(),
   EXCEPTION_FILTER: Symbol(),
   AUTH_EXCEPTION_FILTER: Symbol(),
+  HTTP_EXCEPTION_FILTER: Symbol(),
+  VALIDATION_EXCEPTION_FILTER: Symbol(),
+  PATH_TRANSFORMER: Symbol()
 } as const;

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNumber, IsNotEmpty, Min, Max, IsString, Length, IsEnum, ValidateNested, IsUrl, IsArray, ArrayMaxSize, ArrayMinSize, IsBoolean } from 'class-validator';
+import { IsNumber, IsNotEmpty, Min, Max, IsString, Length, IsEnum, ValidateNested, IsUrl, IsArray, ArrayMaxSize, ArrayMinSize, IsBoolean, IsMongoId } from 'class-validator';
 import { City, Amenity, Location, HousingType, OfferImages } from '../../../types/index.js';
 import { CityDto } from './city.dto.js';
 import { LocationDto } from './location.dto.js';
@@ -64,6 +64,10 @@ export class CreateOfferDto {
   @ArrayMinSize(OFFER_VALIDATION.AMENITIES.MIN_COUNT)
   @IsEnum(Amenity, { each: true })
   public amenities: Amenity[];
+
+  @IsNotEmpty()
+  @IsMongoId()
+  public authorId: string;
 
   @IsNotEmpty()
   @ValidateNested()

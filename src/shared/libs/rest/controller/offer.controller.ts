@@ -17,7 +17,7 @@ export class OfferController extends BaseController {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) protected readonly logger: Logger,
     @inject(COMPONENT_MAP.OFFER_SERVICE) private readonly offerService: OfferService,
-    @inject(COMPONENT_MAP.COMMENT_SERVICE) private readonly commentService: CommentService
+    @inject(COMPONENT_MAP.COMMENT_SERVICE) private readonly commentService: CommentService,
   ) {
     super(logger);
 
@@ -77,7 +77,7 @@ export class OfferController extends BaseController {
       throw new AccessDeniedError();
     }
     const updatedOffer = await this.offerService.updateById(offerId, body);
-    this.ok(res, fillDTO(OfferRdo, updatedOffer));
+    this.created(res, fillDTO(OfferRdo, updatedOffer));
   }
 
   public async delete({ params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {

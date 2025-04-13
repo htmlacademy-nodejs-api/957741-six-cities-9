@@ -10,6 +10,8 @@ import { Config } from 'convict';
 import { RestSchema } from '../../config/rest.schema.type.js';
 import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.js';
 import { UserAlreadyExistsException } from '../../../modules/user/errors/user-already-exists.exception.js';
+import { ALLOWED_FORMATS } from '../transform/path-transformer.constant.js';
+import { DeniedForAuthentificatedException } from '../../../modules/user/errors/index.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -31,7 +33,7 @@ export class UserController extends BaseController {
       path: '/avatar', method: HttpMethod.Put, handler: this.uploadAvatar,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ['png', 'jpg']),
+        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ALLOWED_FORMATS),
       ]
     });
     this.addRoute({
@@ -58,8 +60,12 @@ export class UserController extends BaseController {
     this.logger.info('Register routes for UserController');
   }
 
-  public async create({ body }: Request, res: Response): Promise<void> {
+  public async create({ body, tokenPayload: { id } }: Request, res: Response): Promise<void> {
     const existingUser = await this.userService.findByEmail(body.email);
+
+    if (id) {
+      throw new DeniedForAuthentificatedException();
+    }
 
     if (existingUser) {
       throw new UserAlreadyExistsException(body.email);
@@ -71,7 +77,7 @@ export class UserController extends BaseController {
 
   public async uploadAvatar({ file, tokenPayload: { id: authorId } }: Request, res: Response) {
     const user = await this.userService.updateById(authorId, { avatarUrl: file?.path });
-    this.ok(res, fillDTO(OfferRdo, user));
+    this.created(res, fillDTO(OfferRdo, user));
   }
 
   public async getFavorites({ tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {

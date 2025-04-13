@@ -4,3 +4,4 @@ export { OfferService } from './offer-service.interface.js';
 export { CreateOfferDto, UpdateOfferDto } from './dto/index.js';
 export { OfferEntity, OfferModel } from './offer.entity.js';
 export { createOfferContainer } from './offer.container.js';
+export { UploadImageRdo } from './rdo/upload-image.rdo.js';

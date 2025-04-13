@@ -11,7 +11,7 @@ import { Nullable } from '../../types/index.js';
 import { UpdateUserDto } from './index.js';
 import { OfferEntity } from '../offer/index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
-import { STUB_AVATAR_URL } from './const.js';
+import { DEFAULT_AVATAR_FILE_NAME } from './const.js';
 
 @injectable()
 export class DefaultUserService implements UserService {
@@ -22,7 +22,7 @@ export class DefaultUserService implements UserService {
   ) { }
 
   public async create(dto: CreateUserDto): Promise<DocumentType<UserEntity>> {
-    const user = new UserEntity(Object.assign(dto, { avatarUrl: STUB_AVATAR_URL }), this.config.get('SALT'));
+    const user = new UserEntity(Object.assign(dto, { avatarUrl: DEFAULT_AVATAR_FILE_NAME }), this.config.get('SALT'));
 
     const result = await this.userModel.create(user);
     this.logger.info(`New user created: ${user.email}`);

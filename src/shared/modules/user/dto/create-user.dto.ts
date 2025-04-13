@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEmail, IsString, IsUrl, IsEnum, Length, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, IsEnum, Length } from 'class-validator';
 import { UserType } from '../../../types/user.type.js';
 import { USER_VALIDATION } from './const.js';
 
@@ -6,11 +6,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   public email: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUrl()
-  public avatarUrl?: string;
 
   @IsNotEmpty()
   @IsString()
