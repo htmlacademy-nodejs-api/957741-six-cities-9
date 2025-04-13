@@ -26,7 +26,7 @@ export class UserEntity implements User {
   public userType: UserType;
 
   @prop({
-    ref: () => OfferEntity,
+    ref: 'OfferEntity',
     required: true,
     default: [],
   })

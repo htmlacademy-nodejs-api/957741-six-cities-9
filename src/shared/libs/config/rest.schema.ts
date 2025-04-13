@@ -60,10 +60,10 @@ export const configRestSchema = convict<RestSchema>({
     env: 'UPLOAD_DIRECTORY',
     default: null
   },
-  STATIC_DIRECTORY_PATH: {
+  STATIC_DIRECTORY: {
     doc: 'Path to directory with static resources',
     format: String,
-    env: 'STATIC_DIRECTORY_PATH',
+    env: 'STATIC_DIRECTORY',
     default: 'static'
   },
   JWT_SECRET: {
