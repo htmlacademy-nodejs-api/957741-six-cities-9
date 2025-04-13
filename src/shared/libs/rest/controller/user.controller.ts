@@ -10,6 +10,7 @@ import { Config } from 'convict';
 import { RestSchema } from '../../config/rest.schema.type.js';
 import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.js';
 import { UserAlreadyExistsException } from '../../../modules/user/errors/user-already-exists.exception.js';
+import { ALLOWED_FORMATS } from '../transform/path-transformer.constant.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -31,7 +32,7 @@ export class UserController extends BaseController {
       path: '/avatar', method: HttpMethod.Put, handler: this.uploadAvatar,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ['png', 'jpg']),
+        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ALLOWED_FORMATS),
       ]
     });
     this.addRoute({

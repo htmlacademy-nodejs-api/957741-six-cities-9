@@ -7,3 +7,8 @@ export const STATIC_RESOURCE_FIELDS = [
   'previewImage',
   'images',
 ];
+
+export const ALLOWED_FORMATS = [
+  'png', 'jpg'
+];
+

@@ -13,6 +13,7 @@ import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.j
 import { AccessDeniedError } from '../../../modules/auth/errors/index.js';
 import { Config } from 'convict';
 import { RestSchema } from '../../config/rest.schema.type.js';
+import { ALLOWED_FORMATS } from '../transform/path-transformer.constant.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -59,7 +60,7 @@ export class OfferController extends BaseController {
       middlewares: [
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
-        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'image', ['jpg', 'png']),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'image', ALLOWED_FORMATS),
       ]
     });
     this.addRoute({ path: '/premium/:city', method: HttpMethod.Get, handler: this.findPremiumByCity });
