@@ -4,8 +4,6 @@ export const DEFAULT_STATIC_IMAGES = [
 
 export const STATIC_RESOURCE_FIELDS = [
   'avatarUrl',
-  'previewImage',
-  'images',
 ];
 
 export const ALLOWED_FORMATS = [

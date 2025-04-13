@@ -419,55 +419,6 @@ paths:
         "404":
           description: "Предложение не найдено"
 
-  /offers/{offerId}/image:
-    post:
-      tags:
-        - Offers
-      summary: Загрузить превью изображение для предложения
-      description: >
-        Загружает превью изображение для предложения. Изображение
-        должно быть в формате `png` или `jpg`.
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: offerId
-          in: path
-          description: "Идентификатор предложения"
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Изображение превью для предложения
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                  description: Изображение превью для предложения (файл)
-      responses:
-        "201":
-          description: Изображение превью успешно загружено.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  previewImage:
-                    type: string
-                    description: Путь к загруженному изображению
-        "400":
-          description: Неверный формат файла. Допускаются только изображения в формате PNG или JPG.
-        "401":
-          description: Не авторизован. Пожалуйста, предоставьте валидный токен.
-        "403":
-          description: Попытка загрузки изображения для чужого предложения
-        "404":
-          description: Предложение не найдено
-
 components:
   securitySchemes:
     bearerAuth:

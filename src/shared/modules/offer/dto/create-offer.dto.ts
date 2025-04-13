@@ -22,6 +22,11 @@ export class CreateOfferDto {
   public city: City;
 
   @IsNotEmpty()
+  @IsString()
+  @IsUrl()
+  public previewImage: string;
+
+  @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(OFFER_VALIDATION.IMAGES.MIN_COUNT)
   @ArrayMaxSize(OFFER_VALIDATION.IMAGES.MAX_COUNT)
