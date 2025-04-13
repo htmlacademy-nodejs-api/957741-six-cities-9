@@ -1,6 +1,7 @@
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { ValidationError } from 'class-validator';
-import { ApplicationError, ValidationErrorField } from '../libs/rest/types/validation-error-field.type.js';
+import { ValidationErrorField } from '../libs/rest/types/validation-error-field.type.js';
+import { ApplicationError } from '../libs/rest/index.js';
 
 
 export function generateRandomValue(min: number, max: number, numAfterDigit = 0) {

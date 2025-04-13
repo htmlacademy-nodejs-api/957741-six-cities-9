@@ -14,9 +14,9 @@ async function bootstrap() {
 
   appContainer.load(
     createRestApplicationContainer(),
-    createUserContainer(),
-    createAuthContainer(),
     createOfferContainer(),
+    createAuthContainer(),
+    createUserContainer(),
     createCommentContainer(),
   );
 
