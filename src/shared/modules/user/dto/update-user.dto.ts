@@ -15,5 +15,5 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsEnum(UserType)
-  public type?: UserType;
+  public userType?: UserType;
 }
