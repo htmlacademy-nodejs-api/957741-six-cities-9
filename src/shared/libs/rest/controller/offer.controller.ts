@@ -90,7 +90,7 @@ export class OfferController extends BaseController {
       throw new AccessDeniedError();
     }
     const updatedOffer = await this.offerService.updateById(offerId, body);
-    this.ok(res, fillDTO(OfferRdo, updatedOffer));
+    this.created(res, fillDTO(OfferRdo, updatedOffer));
   }
 
   public async delete({ params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {

@@ -71,7 +71,7 @@ export class UserController extends BaseController {
 
   public async uploadAvatar({ file, tokenPayload: { id: authorId } }: Request, res: Response) {
     const user = await this.userService.updateById(authorId, { avatarUrl: file?.path });
-    this.ok(res, fillDTO(OfferRdo, user));
+    this.created(res, fillDTO(OfferRdo, user));
   }
 
   public async getFavorites({ tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
