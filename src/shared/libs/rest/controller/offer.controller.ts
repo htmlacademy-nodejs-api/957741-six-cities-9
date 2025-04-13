@@ -1,23 +1,26 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 
-import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../index.js';
+import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, UploadFileMiddleware, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../index.js';
 import { Logger } from '../../logger/index.js';
 import { COMPONENT_MAP } from '../../../types/component-map.enum.js';
-import { CreateOfferDto, OfferRdo, OfferService, UpdateOfferDto } from '../../../modules/offer/index.js';
+import { CreateOfferDto, OfferRdo, OfferService, UpdateOfferDto, UploadImageRdo } from '../../../modules/offer/index.js';
 import { fillDTO } from '../../../helpers/common.js';
 import { CommentService } from '../../../modules/comment/index.js';
 import { CityName } from '../../../types/offer.type.js';
 import { StatusCodes } from 'http-status-codes';
 import { PrivateRouteMiddleware } from '../middleware/private-route.middleware.js';
 import { AccessDeniedError } from '../../../modules/auth/errors/index.js';
+import { Config } from 'convict';
+import { RestSchema } from '../../config/rest.schema.type.js';
 
 @injectable()
 export class OfferController extends BaseController {
   constructor(
     @inject(COMPONENT_MAP.LOGGER) protected readonly logger: Logger,
     @inject(COMPONENT_MAP.OFFER_SERVICE) private readonly offerService: OfferService,
-    @inject(COMPONENT_MAP.COMMENT_SERVICE) private readonly commentService: CommentService
+    @inject(COMPONENT_MAP.COMMENT_SERVICE) private readonly commentService: CommentService,
+    @inject(COMPONENT_MAP.CONFIG) private readonly configService: Config<RestSchema>,
   ) {
     super(logger);
 
@@ -47,6 +50,16 @@ export class OfferController extends BaseController {
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:offerId/image',
+      method: HttpMethod.Post,
+      handler: this.uploadPreviewImage,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('offerId'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'image', ['jpg', 'png']),
       ]
     });
     this.addRoute({ path: '/premium/:city', method: HttpMethod.Get, handler: this.findPremiumByCity });
@@ -88,6 +101,16 @@ export class OfferController extends BaseController {
     this.commentService.deleteByOfferId(offerId);
     const deletedOffer = await this.offerService.deleteById(offerId);
     this.noContent(res, fillDTO(OfferRdo, deletedOffer));
+  }
+
+  public async uploadPreviewImage({ params: { offerId }, file, tokenPayload: { id: authorId } }: Request, res: Response) {
+    const offer = await this.offerService.findById(offerId);
+    if (offer?.authorId._id.toString() !== authorId) {
+      throw new AccessDeniedError();
+    }
+    const updateDto = { previewImage: file?.filename };
+    await this.offerService.updateById(offerId, updateDto);
+    this.created(res, fillDTO(UploadImageRdo, updateDto));
   }
 
   public async findPremiumByCity({ params }: Request, res: Response): Promise<void> {
