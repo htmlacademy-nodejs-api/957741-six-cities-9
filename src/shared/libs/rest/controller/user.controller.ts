@@ -81,17 +81,17 @@ export class UserController extends BaseController {
   }
 
   public async getFavorites({ tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
-    const offers = this.userService.findFavorites(authorId);
+    const offers = await this.userService.findFavorites(authorId);
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
   public async putFavorites({ params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
-    const offer = this.userService.addToFavorites(authorId, offerId);
+    const offer = await this.userService.addToFavorites(authorId, offerId);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
   public async deleteFavorites({ params: { offerId }, tokenPayload: { id: authorId } }: Request, res: Response): Promise<void> {
-    const offer = this.userService.removeFromFavorites(authorId, offerId);
+    const offer = await this.userService.removeFromFavorites(authorId, offerId);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 }

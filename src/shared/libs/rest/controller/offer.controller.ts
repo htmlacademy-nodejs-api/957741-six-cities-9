@@ -85,7 +85,7 @@ export class OfferController extends BaseController {
     if (offer?.authorId._id.toString() !== authorId) {
       throw new AccessDeniedError();
     }
-    this.commentService.deleteByOfferId(offerId);
+    await this.commentService.deleteByOfferId(offerId);
     const deletedOffer = await this.offerService.deleteById(offerId);
     this.noContent(res, fillDTO(OfferRdo, deletedOffer));
   }
