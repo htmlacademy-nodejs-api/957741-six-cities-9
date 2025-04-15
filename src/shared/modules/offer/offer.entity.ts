@@ -15,7 +15,7 @@ export class OfferLocation implements Location {
   public longitude: number;
 }
 
-export class OfferСity implements City {
+export class OfferCity implements City {
   @prop()
   public name: CityName;
 
@@ -36,7 +36,7 @@ export class OfferEntity {
   @prop()
   public description: string;
 
-  @prop({ type: () => OfferСity })
+  @prop({ type: () => OfferCity })
   public city: City;
 
   @prop()
